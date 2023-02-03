@@ -15,6 +15,8 @@ typedef enum {
 	CHANNEL3 = TIM_CHANNEL_3, // PWM3
 } ChannelType;
 
+HAL_StatusTypeDef PWM_Init();
+
 // @brief required motor calibration before first usage
 // @param channel enum type number of channel to precise motor
 void motor_calibration(ChannelType channel);

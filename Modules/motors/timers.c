@@ -149,7 +149,7 @@ void TIM5_Init() {
 	htim5.Instance = TIM5;
 	htim5.Init.Prescaler = PWM_PRESCALER;
 	htim5.Init.CounterMode = TIM_COUNTERMODE_UP;
-	htim5.Init.Period = PWM_MAX_DUTY;
+	htim5.Init.Period = PWM_PERIOD;
 	htim5.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
 	htim5.Init.RepetitionCounter = PWM_REPETITION_COUNTER;
 	htim5.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_ENABLE;

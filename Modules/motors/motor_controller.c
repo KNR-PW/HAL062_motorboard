@@ -8,6 +8,7 @@
 
 #include "motor_controller.h"
 #include "control_consts.h"
+#include "encoder_consts.h"
 
 
 int16_t PIDSpeedController(float referenceSpeed, float actualSpeed,
@@ -15,13 +16,15 @@ int16_t PIDSpeedController(float referenceSpeed, float actualSpeed,
 	float integrator_speed = 0;
 	float speed_error = 0;
 	static int16_t saturation;
+
 	speed_error = referenceSpeed - actualSpeed;
+
 	// TODO: no idea how this regulator is actually working:
 	// PID_SPEED_KiTs * speed_error - probably proportional term
 	// the rest is unclear to me
 	integrator_speed += (PID_SPEED_KiTs * speed_error
 			+ (saturation * PID_SPEED_Kk) + (currentRegOut * PID_SPEED_Kk));
-	int16_t out = (int16_t) (PID_SPEED_Kp * speed_error + integrator_speed);
+	int16_t out = (int16_t) integrator_speed;
 
 	// TODO: I'm not sure what these ifs do exactly
 	if (referenceSpeed > 0) {
@@ -68,7 +71,8 @@ float getFilteredSpeed(int32_t encoder_ticks, float *prev_out) {
 	static float raw_speed;
 	if (encoder_ticks != 0) {
 		// TODO: magic number 100000 - maybe some constant to take transmission into account
-		raw_speed = 100000 / encoder_ticks;
+//		raw_speed = 100000/encoder_ticks;
+		raw_speed = encoder_ticks*1000/(VELOCITY_CLOCK_TIME * ENC_PULSE_PER_ROTATION);
 	} else {
 		raw_speed = 0;
 	}

@@ -13,6 +13,7 @@
 
 // TODO: no idea why this is 1000
 #define PWM_MAX_DUTY 1000
+#define PWM_MIN_DUTY 500
 
 // @brief PID controller algorithm
 // @param referenceSpeed reference speed to be reached
