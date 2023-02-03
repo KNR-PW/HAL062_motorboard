@@ -18,20 +18,24 @@ void SysTick_Handler(void) {
 int main(void) {
 	HAL_Init();
 	PWM_Init();
+	PWM_SetDutyCycle(CHANNEL3, 750);
 	InitTimers();
+//	PWM_SetDutyCycle(CHANNEL1, 750);
 
-	struct singleMotorParam param[1];
+	struct singleMotorParam param[3];
 
-	param[0].id = LM;
-	param[0].speed = 0;
+	param[0].id = LR;
+	param[0].speed = 30;
 
-	motor_calibration(CHANNEL2);
+	param[1].id = LM;
+	param[1].speed = 0;
+
+	param[2].id = LF;
+	param[2].speed = 0;
+
+//	motor_calibration(CHANNEL1);
 	/* Loop forever */
 	while (1) {
-		if (setOneSideSpeeds(param, 1))
-			param[0].speed
-//			PWM_SetDutyCycle(CHANNEL2, param[0].speed);
-//		PWM_SetDutyCycle(CHANNEL2, 1500);
-
+		setOneSideSpeeds(param, 3);
 	}
 }
