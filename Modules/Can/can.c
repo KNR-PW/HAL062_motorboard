@@ -43,7 +43,7 @@ void MX_CAN1_Init(void) {
 	CAN_FilterTypeDef sFilterConfig;
 
 	hcan1.Instance = CAN1;
-	hcan1.Init.Prescaler = 40;
+	hcan1.Init.Prescaler = 40u;
 	hcan1.Init.Mode = CAN_MODE_NORMAL;
 	hcan1.Init.SyncJumpWidth = CAN_SJW_1TQ;
 	hcan1.Init.TimeSeg1 = CAN_BS1_9TQ;
@@ -57,7 +57,7 @@ void MX_CAN1_Init(void) {
 	if (HAL_CAN_Init(&hcan1) != HAL_OK) {
 		//_Error_Handler(__FILE__, __LINE__);
 	}
-	sFilterConfig.FilterBank = 0;
+	sFilterConfig.FilterBank = 0u;
 	sFilterConfig.FilterMode = CAN_FILTERMODE_IDMASK;
 	sFilterConfig.FilterScale = CAN_FILTERSCALE_16BIT;
 	sFilterConfig.FilterIdHigh = 0xFFFF;
@@ -94,8 +94,8 @@ void Can_testMessage(void){
 	CAN_TxHeader.RTR=CAN_RTR_DATA;
 	CAN_TxHeader.DLC=8;
 	uint8_t dane[8];
-	dane[0]=0xAA;
-	dane[1]=0xAA;
+	dane[0]=0xAAu;
+	dane[1]=0xAAu;
 	for(int i=2;i<8;i++)
 	{
 		dane[i]=0;
