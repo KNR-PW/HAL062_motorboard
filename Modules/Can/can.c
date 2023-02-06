@@ -1,9 +1,9 @@
 /* Includes ------------------------------------------------------------------*/
+#include <can/can.h>
 #include <stm32f4xx_hal_gpio.h>
 #include <stm32f4xx_hal_cortex.h>
 #include <stm32f4xx_hal_rcc.h>
-#include "can.h"
-#include <leds/leds.h>
+#include "leds/leds.h"
 
 /* USER CODE BEGIN 0 */
 
@@ -15,7 +15,7 @@ static CAN_RxHeaderTypeDef CAN_RxHeader;
 static uint8_t CAN_RxMsg[8];
 
 static CAN_TxHeaderTypeDef CAN_TxHeader;
-static uint8_t CAN_TxData[8];
+// static uint8_t CAN_TxData[8];
 
 CAN_HandleTypeDef hcan1;
 // CAN_HandleTypeDef hcan2;
@@ -29,7 +29,7 @@ void HAL_CAN_RxFifo0MsgPendingCallback(CAN_HandleTypeDef *hcan) {
 		//HAL_CAN_GetRxMessage(&hcan2, CAN_RX_FIFO0, &CAN_RxHeader, CAN_RxMsg);
 		//COM_RunCanAction();
 	}
-	//Leds_toggleLed(LED1);
+	Leds_toggleLed(LED3);
 }
 
 void HAL_CAN_RxFifo1MsgPendingCallback(CAN_HandleTypeDef *hcan) {
@@ -43,7 +43,7 @@ void MX_CAN1_Init(void) {
 	CAN_FilterTypeDef sFilterConfig;
 
 	hcan1.Instance = CAN1;
-	hcan1.Init.Prescaler = 50;
+	hcan1.Init.Prescaler = 40u;
 	hcan1.Init.Mode = CAN_MODE_NORMAL;
 	hcan1.Init.SyncJumpWidth = CAN_SJW_1TQ;
 	hcan1.Init.TimeSeg1 = CAN_BS1_9TQ;
@@ -57,12 +57,12 @@ void MX_CAN1_Init(void) {
 	if (HAL_CAN_Init(&hcan1) != HAL_OK) {
 		//_Error_Handler(__FILE__, __LINE__);
 	}
-	sFilterConfig.FilterBank = 0;
+	sFilterConfig.FilterBank = 0u;
 	sFilterConfig.FilterMode = CAN_FILTERMODE_IDMASK;
 	sFilterConfig.FilterScale = CAN_FILTERSCALE_16BIT;
-	sFilterConfig.FilterIdHigh = 0x0000;
+	sFilterConfig.FilterIdHigh = 0xFFFF;
 	sFilterConfig.FilterIdLow = 0x0000;
-	sFilterConfig.FilterMaskIdHigh = 0x0000;
+	sFilterConfig.FilterMaskIdHigh = 0xFFFF;
 	sFilterConfig.FilterMaskIdLow = 0x0000;
 	sFilterConfig.FilterFIFOAssignment = CAN_RX_FIFO0;
 	sFilterConfig.FilterActivation = ENABLE;
@@ -94,8 +94,8 @@ void Can_testMessage(void){
 	CAN_TxHeader.RTR=CAN_RTR_DATA;
 	CAN_TxHeader.DLC=8;
 	uint8_t dane[8];
-	dane[0]=0xAA;
-	dane[1]=0xAA;
+	dane[0]=0xAAu;
+	dane[1]=0xAAu;
 	for(int i=2;i<8;i++)
 	{
 		dane[i]=0;
@@ -308,16 +308,42 @@ void HAL_CAN_MspDeInit(CAN_HandleTypeDef *canHandle) {
 	}
 }
 
-/* USER CODE BEGIN 1 */
 
-/* USER CODE END 1 */
+void CAN1_TX_IRQHandler(void)
+{
+  /* USER CODE BEGIN CAN1_TX_IRQn 0 */
+
+  /* USER CODE END CAN1_TX_IRQn 0 */
+  HAL_CAN_IRQHandler(&hcan1);
+  /* USER CODE BEGIN CAN1_TX_IRQn 1 */
+
+  /* USER CODE END CAN1_TX_IRQn 1 */
+}
 
 /**
- * @}
- */
+* @brief This function handles CAN1 RX0 interrupt.
+*/
+void CAN1_RX0_IRQHandler(void)
+{
+  /* USER CODE BEGIN CAN1_RX0_IRQn 0 */
+
+  /* USER CODE END CAN1_RX0_IRQn 0 */
+  HAL_CAN_IRQHandler(&hcan1);
+  /* USER CODE BEGIN CAN1_RX0_IRQn 1 */
+
+  /* USER CODE END CAN1_RX0_IRQn 1 */
+}
 
 /**
- * @}
- */
+* @brief This function handles CAN1 RX1 interrupt.
+*/
+void CAN1_RX1_IRQHandler(void)
+{
+  /* USER CODE BEGIN CAN1_RX1_IRQn 0 */
 
-/************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/
+  /* USER CODE END CAN1_RX1_IRQn 0 */
+  HAL_CAN_IRQHandler(&hcan1);
+  /* USER CODE BEGIN CAN1_RX1_IRQn 1 */
+
+  /* USER CODE END CAN1_RX1_IRQn 1 */
+}
