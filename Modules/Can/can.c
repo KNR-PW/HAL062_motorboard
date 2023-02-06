@@ -3,7 +3,7 @@
 #include <stm32f4xx_hal_gpio.h>
 #include <stm32f4xx_hal_cortex.h>
 #include <stm32f4xx_hal_rcc.h>
-#include <leds/leds.h>
+#include "leds/leds.h"
 
 /* USER CODE BEGIN 0 */
 
@@ -29,7 +29,7 @@ void HAL_CAN_RxFifo0MsgPendingCallback(CAN_HandleTypeDef *hcan) {
 		//HAL_CAN_GetRxMessage(&hcan2, CAN_RX_FIFO0, &CAN_RxHeader, CAN_RxMsg);
 		//COM_RunCanAction();
 	}
-	//Leds_toggleLed(LED1);
+	Leds_toggleLed(LED3);
 }
 
 void HAL_CAN_RxFifo1MsgPendingCallback(CAN_HandleTypeDef *hcan) {

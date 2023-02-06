@@ -30,20 +30,20 @@ void SysTick_Handler(void)
 	if (work_led_state && work_led_cnt >= 100u) {
 		work_led_cnt = 0u;
 		work_led_state = false;
-		Leds_turnOffLed(LED2);
+		Leds_turnOffLed(LED1);
 	}
 	if (!work_led_state && work_led_cnt >= 400u) {
 		work_led_cnt = 0u;
 		work_led_state = true;
-		Leds_turnOnLed(LED2);
+		Leds_turnOnLed(LED1);
 	}
 	work_led_cnt++;
 }
 
 int main(void)
 {
-	HAL_Init();
 	SystemClock_Config();
+	HAL_Init();
 
 	MX_CAN1_Init();
 	Leds_init();
@@ -52,12 +52,6 @@ int main(void)
     /* Loop forever */
 	while(1)
 	{
-//		Leds_toggleLed(LED4);
-//		HAL_Delay(1000);
-//		Leds_toggleLed(LED4);
-//		HAL_Delay(1000);
-//
-//		Can_testMessage();
 	}
 }
 
