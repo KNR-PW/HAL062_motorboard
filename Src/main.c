@@ -15,7 +15,6 @@
 #include "can/can.h"
 #include "leds/leds.h"
 
-
 void SystemClock_Config(void);
 void Error_Handler(void);
 

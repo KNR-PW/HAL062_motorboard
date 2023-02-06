@@ -15,7 +15,7 @@ static CAN_RxHeaderTypeDef CAN_RxHeader;
 static uint8_t CAN_RxMsg[8];
 
 static CAN_TxHeaderTypeDef CAN_TxHeader;
-static uint8_t CAN_TxData[8];
+// static uint8_t CAN_TxData[8];
 
 CAN_HandleTypeDef hcan1;
 // CAN_HandleTypeDef hcan2;
