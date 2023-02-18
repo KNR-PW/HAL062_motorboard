@@ -9,7 +9,7 @@
 
 /* USER CODE END 0 */
 static uint32_t CAN_TxMailbox;
-static uint32_t HAL_RCC_CAN1_CLK_ENABLED=0;
+static uint32_t HAL_RCC_CAN1_CLK_ENABLED = 0u;
 
 static CAN_RxHeaderTypeDef CAN_RxHeader;
 static uint8_t CAN_RxMsg[8];
@@ -17,25 +17,65 @@ static uint8_t CAN_RxMsg[8];
 static CAN_TxHeaderTypeDef CAN_TxHeader;
 // static uint8_t CAN_TxData[8];
 
+volatile static uint8_t PID_reference_Value_left = 0u;
+volatile static uint8_t PID_reference_Value_right = 0u;
+static uint8_t PID_max_Speed = 0u;
+
 CAN_HandleTypeDef hcan1;
 // CAN_HandleTypeDef hcan2;
 
 void HAL_CAN_RxFifo0MsgPendingCallback(CAN_HandleTypeDef *hcan) {
 
-	if (hcan->Instance == CAN1) {
-		HAL_CAN_GetRxMessage(&hcan1, CAN_RX_FIFO0, &CAN_RxHeader, CAN_RxMsg);
-		//COM_RunCanAction();
-	} else if (hcan->Instance == CAN2) {
-		//HAL_CAN_GetRxMessage(&hcan2, CAN_RX_FIFO0, &CAN_RxHeader, CAN_RxMsg);
-		//COM_RunCanAction();
+//	if (hcan->Instance == CAN1) {
+	HAL_CAN_GetRxMessage(&hcan1, CAN_RX_FIFO0, &CAN_RxHeader, CAN_RxMsg);
+	//COM_RunCanAction();
+//	} else if (hcan->Instance == CAN2) {
+//		//HAL_CAN_GetRxMessage(&hcan2, CAN_RX_FIFO0, &CAN_RxHeader, CAN_RxMsg);
+//		//COM_RunCanAction();
+//	}
+
+//	HAL_GPIO_TogglePin(GPIOC, GPIO_PIN_15);
+//	HAL_CAN_Receive_IT(hcan, CAN_FIFO0);
+
+/// TODO: Check why there are three check; check what desktpo app sends
+//	if (CAN_RxHeader.StdId == 21) {
+	if(CAN_RxMsg[0] == 21){
+//		Can_Watchdog_Reset();
+		if (CAN_RxMsg[1] != 0x01) {
+//			PWM_stop();
+		} else if (CAN_RxMsg[2] != 0x01) {
+//			PWM_stop();
+		} else if (CAN_RxMsg[3] != 0x01) {
+//			PWM_stop();
+		} else {
+//			PWM_start(); 	//engine start
+			PID_max_Speed = (int16_t) ((0.1) * CAN_RxMsg[3]);
+		}
 	}
+//	if (CAN_RxHeader.StdId == 20) {
+	if(CAN_RxMsg[0] == 20){
+//		Can_Watchdog_Reset();
+		//if (BOARD_ID > 0) {
+		int8_t refValue = CAN_RxMsg[0];
+		PID_reference_Value_left = ((int16_t) refValue) * PID_max_Speed;
+		refValue = CAN_RxMsg[1];
+		PID_reference_Value_right = ((int16_t) refValue) * PID_max_Speed;
+		//}
+	}
+
+//	if (HAL_CAN_Receive_IT(hcan, CAN_RX_FIFO0) != HAL_OK) {
+//		/* Reception Error */
+//		Error_Handler();
+//	}
 	Leds_toggleLed(LED3);
 }
+
+
 
 void HAL_CAN_RxFifo1MsgPendingCallback(CAN_HandleTypeDef *hcan) {
 
 	HAL_CAN_GetRxMessage(&hcan1, CAN_RX_FIFO1, &CAN_RxHeader, CAN_RxMsg);
-	//Leds_toggleLed(LED2);
+//Leds_toggleLed(LED2);
 }
 
 /* CAN1 init function */
@@ -84,23 +124,22 @@ void MX_CAN1_Init(void) {
 	 {
 	 Error_Handler();
 	 }*/
-
+//	HAL_CAN_Receive_IT(&hcan1, CAN_RX_FIFO0);
 }
 
-void Can_testMessage(void){
-	CAN_TxHeader.StdId=20;
-	CAN_TxHeader.ExtId=20;
-	CAN_TxHeader.IDE=CAN_ID_STD;
-	CAN_TxHeader.RTR=CAN_RTR_DATA;
-	CAN_TxHeader.DLC=8;
+void Can_testMessage(void) {
+	CAN_TxHeader.StdId = 20;
+	CAN_TxHeader.ExtId = 20;
+	CAN_TxHeader.IDE = CAN_ID_STD;
+	CAN_TxHeader.RTR = CAN_RTR_DATA;
+	CAN_TxHeader.DLC = 8;
 	uint8_t dane[8];
-	dane[0]=0xAAu;
-	dane[1]=0xAAu;
-	for(int i=2;i<8;i++)
-	{
-		dane[i]=0;
+	dane[0] = 0xAAu;
+	dane[1] = 0xAAu;
+	for (int i = 2; i < 8; i++) {
+		dane[i] = 0;
 	}
-	HAL_CAN_AddTxMessage(&hcan1,&CAN_TxHeader, dane, &CAN_TxMailbox);
+	HAL_CAN_AddTxMessage(&hcan1, &CAN_TxHeader, dane, &CAN_TxMailbox);
 	Leds_toggleLed(LED4);
 }
 /* CAN2 init function */
@@ -151,36 +190,35 @@ void Can_testMessage(void){
 //
 //static uint32_t HAL_RCC_CAN1_CLK_ENABLED = 0;
 //
-void HAL_MspInit(void)
-{
-  /* USER CODE BEGIN MspInit 0 */
+void HAL_MspInit(void) {
+	/* USER CODE BEGIN MspInit 0 */
 
-  /* USER CODE END MspInit 0 */
+	/* USER CODE END MspInit 0 */
 
-  __HAL_RCC_SYSCFG_CLK_ENABLE();
-  __HAL_RCC_PWR_CLK_ENABLE();
+	__HAL_RCC_SYSCFG_CLK_ENABLE();
+	__HAL_RCC_PWR_CLK_ENABLE();
 
-  HAL_NVIC_SetPriorityGrouping(NVIC_PRIORITYGROUP_4);
+	HAL_NVIC_SetPriorityGrouping(NVIC_PRIORITYGROUP_4);
 
-  /* System interrupt init*/
-  /* MemoryManagement_IRQn interrupt configuration */
-  HAL_NVIC_SetPriority(MemoryManagement_IRQn, 0, 0);
-  /* BusFault_IRQn interrupt configuration */
-  HAL_NVIC_SetPriority(BusFault_IRQn, 0, 0);
-  /* UsageFault_IRQn interrupt configuration */
-  HAL_NVIC_SetPriority(UsageFault_IRQn, 0, 0);
-  /* SVCall_IRQn interrupt configuration */
-  HAL_NVIC_SetPriority(SVCall_IRQn, 0, 0);
-  /* DebugMonitor_IRQn interrupt configuration */
-  HAL_NVIC_SetPriority(DebugMonitor_IRQn, 0, 0);
-  /* PendSV_IRQn interrupt configuration */
-  HAL_NVIC_SetPriority(PendSV_IRQn, 0, 0);
-  /* SysTick_IRQn interrupt configuration */
-  HAL_NVIC_SetPriority(SysTick_IRQn, 0, 0);
+	/* System interrupt init*/
+	/* MemoryManagement_IRQn interrupt configuration */
+	HAL_NVIC_SetPriority(MemoryManagement_IRQn, 0, 0);
+	/* BusFault_IRQn interrupt configuration */
+	HAL_NVIC_SetPriority(BusFault_IRQn, 0, 0);
+	/* UsageFault_IRQn interrupt configuration */
+	HAL_NVIC_SetPriority(UsageFault_IRQn, 0, 0);
+	/* SVCall_IRQn interrupt configuration */
+	HAL_NVIC_SetPriority(SVCall_IRQn, 0, 0);
+	/* DebugMonitor_IRQn interrupt configuration */
+	HAL_NVIC_SetPriority(DebugMonitor_IRQn, 0, 0);
+	/* PendSV_IRQn interrupt configuration */
+	HAL_NVIC_SetPriority(PendSV_IRQn, 0, 0);
+	/* SysTick_IRQn interrupt configuration */
+	HAL_NVIC_SetPriority(SysTick_IRQn, 0, 0);
 
-  /* USER CODE BEGIN MspInit 1 */
+	/* USER CODE BEGIN MspInit 1 */
 
-  /* USER CODE END MspInit 1 */
+	/* USER CODE END MspInit 1 */
 }
 
 void HAL_CAN_MspInit(CAN_HandleTypeDef *canHandle) {
@@ -195,7 +233,6 @@ void HAL_CAN_MspInit(CAN_HandleTypeDef *canHandle) {
 		if (HAL_RCC_CAN1_CLK_ENABLED == 1) {
 			__HAL_RCC_CAN1_CLK_ENABLE();
 		}
-
 
 		/**CAN1 GPIO Configuration
 		 *
@@ -308,24 +345,20 @@ void HAL_CAN_MspDeInit(CAN_HandleTypeDef *canHandle) {
 	}
 }
 
-
-void CAN1_TX_IRQHandler(void)
-{
-  HAL_CAN_IRQHandler(&hcan1);
+void CAN1_TX_IRQHandler(void) {
+	HAL_CAN_IRQHandler(&hcan1);
 }
 
 /**
-* @brief This function handles CAN1 RX0 interrupt.
-*/
-void CAN1_RX0_IRQHandler(void)
-{
-  HAL_CAN_IRQHandler(&hcan1);
+ * @brief This function handles CAN1 RX0 interrupt.
+ */
+void CAN1_RX0_IRQHandler(void) {
+	HAL_CAN_IRQHandler(&hcan1);
 }
 
 /**
-* @brief This function handles CAN1 RX1 interrupt.
-*/
-void CAN1_RX1_IRQHandler(void)
-{
-  HAL_CAN_IRQHandler(&hcan1);
+ * @brief This function handles CAN1 RX1 interrupt.
+ */
+void CAN1_RX1_IRQHandler(void) {
+	HAL_CAN_IRQHandler(&hcan1);
 }
