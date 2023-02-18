@@ -278,6 +278,7 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim){
 		g_encoder2Tick = htim2.Instance->CNT;
 		g_encoder3Tick = htim3.Instance->CNT;
 
+
 		// resetting counter for next interrupt
 		__HAL_TIM_SET_COUNTER(&htim1, 0);
 		__HAL_TIM_SET_COUNTER(&htim2, 0);

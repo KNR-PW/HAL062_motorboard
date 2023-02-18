@@ -53,40 +53,39 @@ bool setOneSideSpeeds(struct singleMotorParam *params, int array_length) {
 	for (i = 0; i < array_length; i += 1) {
 		float filtered_speed = getFilteredSpeed(*(int32_t*) encoders_map[i].ptr,
 				speed_map[i].ptr);
-		*(float*) PID_map[i].ptr = PIDSpeedController(params[i].speed,
+		*(float*)PID_map[i].ptr = PIDSpeedController(params[i].speed,
 				filtered_speed, *(float*) PID_map[i].ptr);
 	}
 
 //	 setting PWM duty to concrete channel;
 	    for (uint8_t i=0; i<3; i++)
 	    {
-	        uint16_t old_duty = 0;
 	        if(params[i].id == LR || params[i].id == RR){
 	            old_duty = hPwm.Instance->CCR1;
-	            if(old_duty+*(float*)PID_map[i].ptr > PWM_MAX_DUTY-50)
-	                PWM_SetDutyCycle(CHANNEL1, PWM_MAX_DUTY-50);
-	            else if(old_duty+*(float*)PID_map[i].ptr < PWM_MIN_DUTY+50)
-	                PWM_SetDutyCycle(CHANNEL1, PWM_MIN_DUTY+50);
+	            if(750+*(float*)PID_map[i].ptr > PWM_MAX_DUTY)
+	                PWM_SetDutyCycle(CHANNEL1, PWM_MAX_DUTY);
+	            else if(750+*(float*)PID_map[i].ptr < PWM_MIN_DUTY)
+	                PWM_SetDutyCycle(CHANNEL1, PWM_MIN_DUTY);
 	            else
-	                PWM_SetDutyCycle(CHANNEL1, old_duty+*(float*)PID_map[i].ptr);
+	                PWM_SetDutyCycle(CHANNEL1, 750+*(float*)PID_map[i].ptr);
 	        }
 	        if(params[i].id == LM || params[i].id == RM){
 	            old_duty = hPwm.Instance->CCR2;
-	            if(old_duty+*(float*)PID_map[i].ptr > PWM_MAX_DUTY-50)
-	                PWM_SetDutyCycle(CHANNEL2, PWM_MAX_DUTY-50);
-	            else if(old_duty+*(float*)PID_map[i].ptr < PWM_MIN_DUTY+50)
-	                PWM_SetDutyCycle(CHANNEL2, PWM_MIN_DUTY+50);
+	            if(750+*(float*)PID_map[i].ptr > PWM_MAX_DUTY)
+	                PWM_SetDutyCycle(CHANNEL2, PWM_MAX_DUTY);
+	            else if(750+*(float*)PID_map[i].ptr < PWM_MIN_DUTY)
+	                PWM_SetDutyCycle(CHANNEL2, PWM_MIN_DUTY);
 	            else
-	                PWM_SetDutyCycle(CHANNEL2, old_duty+*(float*)PID_map[i].ptr);
+	                PWM_SetDutyCycle(CHANNEL2, 750+*(float*)PID_map[i].ptr);
 	        }
 	        if(params[i].id == LF || params[i].id == RF){
 	            old_duty = hPwm.Instance->CCR3;
-	            if(old_duty+*(float*)PID_map[i].ptr > PWM_MAX_DUTY-50)
-	                PWM_SetDutyCycle(CHANNEL3, PWM_MAX_DUTY-50);
-	            else if(old_duty+*(float*)PID_map[i].ptr < PWM_MIN_DUTY+50)
-	                PWM_SetDutyCycle(CHANNEL3, PWM_MIN_DUTY+50);
+	            if(750+*(float*)PID_map[i].ptr > PWM_MAX_DUTY)
+	                PWM_SetDutyCycle(CHANNEL3, PWM_MAX_DUTY);
+	            else if(750+*(float*)PID_map[i].ptr < PWM_MIN_DUTY)
+	                PWM_SetDutyCycle(CHANNEL3, PWM_MIN_DUTY);
 	            else
-	                PWM_SetDutyCycle(CHANNEL3, old_duty+*(float*)PID_map[i].ptr);
+	                PWM_SetDutyCycle(CHANNEL3, 750+*(float*)PID_map[i].ptr);
 	        }
 	    }
 	return true;

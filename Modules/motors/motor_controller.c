@@ -10,27 +10,31 @@
 #include "control_consts.h"
 #include "encoder_consts.h"
 
+float last_error = 0;
+float derivative_error = 0;
+float integrator_error = 0;
 
-int16_t PIDSpeedController(float referenceSpeed, float actualSpeed,
+float PIDSpeedController(float referenceSpeed, float actualSpeed,
 		float currentRegOut) {
-	float integrator_speed = 0;
-	float speed_error = 0;
-	static int16_t saturation;
+
+float speed_error = 0;
+float integrator_speed = 0;
+static float saturation;
+
 
 	speed_error = referenceSpeed - actualSpeed;
 
-	// TODO: no idea how this regulator is actually working:
-	// PID_SPEED_KiTs * speed_error - probably proportional term
-	// the rest is unclear to me
-	integrator_speed += (PID_SPEED_KiTs * speed_error
-			+ (saturation * PID_SPEED_Kk) + (currentRegOut * PID_SPEED_Kk));
-	int16_t out = (int16_t) integrator_speed;
+	//regulation only with integration (no P or D)
+	integrator_speed = PID_SPEED_KiTs * speed_error
+			+ saturation * PID_SPEED_Kp + currentRegOut * PID_SPEED_Kk;
 
-	// TODO: I'm not sure what these ifs do exactly
+	float out = (float) integrator_speed;
+
+	//PWM can be sat max as 1000 so in order to remember how much "over" max PWM integrator is, there is saturation
 	if (referenceSpeed > 0) {
-		if (out >= (PWM_MAX_DUTY - 50)) {
-			saturation = -out + (PWM_MAX_DUTY - 50);
-			out = PWM_MAX_DUTY - 50;
+		if (out >= (PWM_MAX_DUTY - 750)) {
+			saturation = -out + (PWM_MAX_DUTY - 750);
+			out = PWM_MAX_DUTY - 750;
 		} else if (out <= 0) {
 			saturation = -out;
 			out = 0;
@@ -41,9 +45,9 @@ int16_t PIDSpeedController(float referenceSpeed, float actualSpeed,
 		if (out >= 0) {
 			saturation = -out;
 			out = 0;
-		} else if (out <= -(PWM_MAX_DUTY - 50)) {
-			saturation = -out - (PWM_MAX_DUTY - 50);
-			out = -(PWM_MAX_DUTY - 50);
+		} else if (out <= -(PWM_MAX_DUTY - 750)) {
+			saturation = -out - (PWM_MAX_DUTY - 750);
+			out = -(PWM_MAX_DUTY - 750);
 		} else {
 			saturation = 0;
 		}
@@ -53,6 +57,8 @@ int16_t PIDSpeedController(float referenceSpeed, float actualSpeed,
 	}
 
 	return out;
+
+
 }
 
 float lowPassFilter(float curr_in, float *prev_out) {
@@ -72,11 +78,15 @@ float getFilteredSpeed(int32_t encoder_ticks, float *prev_out) {
 	if (encoder_ticks != 0) {
 		// TODO: magic number 100000 - maybe some constant to take transmission into account
 //		raw_speed = 100000/encoder_ticks;
+		if (encoder_ticks > ENC_MAX_PULSE_VALUE / 2 )
+			encoder_ticks = encoder_ticks - ENC_MAX_PULSE_VALUE;
 		raw_speed = encoder_ticks*1000/(VELOCITY_CLOCK_TIME * ENC_PULSE_PER_ROTATION);
 	} else {
 		raw_speed = 0;
 	}
 	float lpf_speed = lowPassFilter(raw_speed, prev_out);
-	return lpf_speed;
+
+//	retuen lpf_speed; - temporary skiping filtering speed
+	return raw_speed;
 }
 

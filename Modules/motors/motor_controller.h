@@ -19,7 +19,7 @@
 // @param referenceSpeed reference speed to be reached
 // @param actualSpeed true speed at moment of calling the function
 // @returns duty of PWM for engine to reach set speed
-int16_t PIDSpeedController(float referenceSpeed, float actualSpeed,
+float PIDSpeedController(float referenceSpeed, float actualSpeed,
 		float currentRegOut);
 
 // @brief Low pass filter (LPF) implemented according to wikipedia
