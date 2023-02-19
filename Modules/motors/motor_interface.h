@@ -25,12 +25,12 @@ typedef enum {
 } MOTOR_ID;
 
 // @brief Command of speed to be set to single motor
-struct singleMotorParam {
+typedef struct singleMotorParam {
 	// id of motor (defined by MOTOR_ID structure)
 	MOTOR_ID id;
 	// speed of motor (value from -100 to 100)
 	int speed;
-};
+}singleMotorParam;
 
 
 // @brief High-level function that should be placed in a continuous loop to control the speed of motors

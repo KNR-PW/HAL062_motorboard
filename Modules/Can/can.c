@@ -4,6 +4,8 @@
 #include <stm32f4xx_hal_cortex.h>
 #include <stm32f4xx_hal_rcc.h>
 #include "leds/leds.h"
+#include "motors/motor_controller.h"
+#include "motors/motor_interface.h"
 
 /* USER CODE BEGIN 0 */
 
@@ -23,6 +25,7 @@ static uint8_t PID_max_Speed = 0u;
 
 CAN_HandleTypeDef hcan1;
 // CAN_HandleTypeDef hcan2;
+static singleMotorParam param[3];
 
 void HAL_CAN_RxFifo0MsgPendingCallback(CAN_HandleTypeDef *hcan) {
 
@@ -45,9 +48,8 @@ void HAL_CAN_RxFifo0MsgPendingCallback(CAN_HandleTypeDef *hcan) {
 //			PWM_stop();
 		} else if (CAN_RxMsg[2] != 0x01) {
 //			PWM_stop();
-		} else if (CAN_RxMsg[3] != 0x01) {
-//			PWM_stop();
 		} else {
+			PWM_Init();
 //			PWM_start(); 	//engine start
 			PID_max_Speed = (int16_t) ((0.1) * CAN_RxMsg[3]);
 		}
@@ -56,11 +58,25 @@ void HAL_CAN_RxFifo0MsgPendingCallback(CAN_HandleTypeDef *hcan) {
 	if(CAN_RxMsg[0] == 20){
 //		Can_Watchdog_Reset();
 		//if (BOARD_ID > 0) {
+
+
+
 		int8_t refValue = CAN_RxMsg[0];
 		PID_reference_Value_left = ((int16_t) refValue) * PID_max_Speed;
 		refValue = CAN_RxMsg[1];
 		PID_reference_Value_right = ((int16_t) refValue) * PID_max_Speed;
 		//}
+
+		param[0].id = LR;
+		param[0].speed = 100;
+
+		param[1].id = LM;
+		param[1].speed = 100;
+
+		param[2].id = LF;
+		param[2].speed = 100;
+
+		setOneSideSpeeds(param, 3);
 	}
 
 //	if (HAL_CAN_Receive_IT(hcan, CAN_RX_FIFO0) != HAL_OK) {

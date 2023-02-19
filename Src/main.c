@@ -6,13 +6,13 @@
  ******************************************************************************
  */
 
+#include <can/can.h>
 #include <stm32f4xx_hal.h>
 #include <stm32f4xx_hal_conf.h>
 #include <stm32f4xx_hal_rcc.h>
 #include <stm32f4xx.h>
 #include <stdbool.h>
 
-#include "can/can.h"
 #include "leds/leds.h"
 
 #include "motors/timers.h"
@@ -49,9 +49,11 @@ void SysTick_Handler(void) {
 
 int main(void) {
 	SystemClock_Config();
+
 	HAL_Init();
-	PWM_Init();
+
 	InitTimers();
+	PWM_Init();
 
 	MX_CAN1_Init();
 	Leds_init();
@@ -59,34 +61,34 @@ int main(void) {
 
 	/* Loop forever */
 	while (1) {
-		roverSide = LEFT_SIDE;
-
-		struct singleMotorParam param[3];
-
-
-		if(roverSide == LEFT_SIDE){
-		param[0].id = LR;
-		param[0].speed = 0;
-
-		param[1].id = LM;
-		param[1].speed = 0;
-
-		param[2].id = LF;
-		param[2].speed = 0;
-		}
-
-		if(roverSide == RIGHT_SIDE){
-		param[0].id = RR;
-		param[0].speed = 0;
-
-		param[1].id = RM;
-		param[1].speed = 0;
-
-		param[2].id = RF;
-		param[2].speed = 0;
-		}
-
-		setOneSideSpeeds(param, 3);
+//		roverSide = LEFT_SIDE;
+//
+//		struct singleMotorParam param[3];
+//
+//
+//		if(roverSide == LEFT_SIDE){
+//		param[0].id = LR;
+//		param[0].speed = 0;
+//
+//		param[1].id = LM;
+//		param[1].speed = 0;
+//
+//		param[2].id = LF;
+//		param[2].speed = 0;
+//		}
+//
+//		if(roverSide == RIGHT_SIDE){
+//		param[0].id = RR;
+//		param[0].speed = 0;
+//
+//		param[1].id = RM;
+//		param[1].speed = 0;
+//
+//		param[2].id = RF;
+//		param[2].speed = 0;
+//		}
+//
+//		setOneSideSpeeds(param, 3);
 	}
 }
 
