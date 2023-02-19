@@ -15,13 +15,22 @@
 #include "can/can.h"
 #include "leds/leds.h"
 
+#include "motors/timers.h"
+#include "motors/motor_interface.h"
+#include "motors/pwm.h"
+
+typedef enum {
+	LEFT_SIDE, RIGHT_SIDE
+} ROVER_SIDE;
+
+ROVER_SIDE roverSide;
+
 void SystemClock_Config(void);
 void Error_Handler(void);
 
 void SysTick_Handler(void) {
 	static int work_led_cnt = 0u;
 	static bool work_led_state = false;
-
 	HAL_IncTick();
 	HAL_SYSTICK_IRQHandler();
 
@@ -41,6 +50,8 @@ void SysTick_Handler(void) {
 int main(void) {
 	SystemClock_Config();
 	HAL_Init();
+	PWM_Init();
+	InitTimers();
 
 	MX_CAN1_Init();
 	Leds_init();
@@ -48,6 +59,34 @@ int main(void) {
 
 	/* Loop forever */
 	while (1) {
+		roverSide = LEFT_SIDE;
+
+		struct singleMotorParam param[3];
+
+
+		if(roverSide == LEFT_SIDE){
+		param[0].id = LR;
+		param[0].speed = 0;
+
+		param[1].id = LM;
+		param[1].speed = 0;
+
+		param[2].id = LF;
+		param[2].speed = 0;
+		}
+
+		if(roverSide == RIGHT_SIDE){
+		param[0].id = RR;
+		param[0].speed = 0;
+
+		param[1].id = RM;
+		param[1].speed = 0;
+
+		param[2].id = RF;
+		param[2].speed = 0;
+		}
+
+		setOneSideSpeeds(param, 3);
 	}
 }
 
