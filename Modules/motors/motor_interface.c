@@ -61,7 +61,6 @@ bool setOneSideSpeeds(struct singleMotorParam *params, int array_length) {
 	    for (uint8_t i=0; i<3; i++)
 	    {
 	        if(params[i].id == LR || params[i].id == RR){
-	            old_duty = hPwm.Instance->CCR1;
 	            if(750+*(float*)PID_map[i].ptr > PWM_MAX_DUTY)
 	                PWM_SetDutyCycle(CHANNEL1, PWM_MAX_DUTY);
 	            else if(750+*(float*)PID_map[i].ptr < PWM_MIN_DUTY)
@@ -70,7 +69,6 @@ bool setOneSideSpeeds(struct singleMotorParam *params, int array_length) {
 	                PWM_SetDutyCycle(CHANNEL1, 750+*(float*)PID_map[i].ptr);
 	        }
 	        if(params[i].id == LM || params[i].id == RM){
-	            old_duty = hPwm.Instance->CCR2;
 	            if(750+*(float*)PID_map[i].ptr > PWM_MAX_DUTY)
 	                PWM_SetDutyCycle(CHANNEL2, PWM_MAX_DUTY);
 	            else if(750+*(float*)PID_map[i].ptr < PWM_MIN_DUTY)
@@ -79,7 +77,6 @@ bool setOneSideSpeeds(struct singleMotorParam *params, int array_length) {
 	                PWM_SetDutyCycle(CHANNEL2, 750+*(float*)PID_map[i].ptr);
 	        }
 	        if(params[i].id == LF || params[i].id == RF){
-	            old_duty = hPwm.Instance->CCR3;
 	            if(750+*(float*)PID_map[i].ptr > PWM_MAX_DUTY)
 	                PWM_SetDutyCycle(CHANNEL3, PWM_MAX_DUTY);
 	            else if(750+*(float*)PID_map[i].ptr < PWM_MIN_DUTY)
