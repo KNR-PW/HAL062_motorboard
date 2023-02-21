@@ -14,19 +14,19 @@ float last_error = 0;
 float derivative_error = 0;
 float integrator_error = 0;
 
+
 float PIDSpeedController(float referenceSpeed, float actualSpeed,
 		float currentRegOut) {
 
-float speed_error = 0;
-float integrator_speed = 0;
-static float saturation;
-
+	float speed_error = 0;
+	float integrator_speed = 0;
+	static float saturation;
 
 	speed_error = referenceSpeed - actualSpeed;
 
 	//regulation only with integration (no P or D)
-	integrator_speed = PID_SPEED_KiTs * speed_error
-			+ saturation * PID_SPEED_Kp + currentRegOut * PID_SPEED_Kk;
+	integrator_speed = PID_SPEED_KiTs * speed_error + saturation * PID_SPEED_Kp
+			+ currentRegOut * PID_SPEED_Kk;
 
 	float out = (float) integrator_speed;
 
@@ -58,7 +58,6 @@ static float saturation;
 
 	return out;
 
-
 }
 
 float lowPassFilter(float curr_in, float *prev_out) {
@@ -78,9 +77,10 @@ float getFilteredSpeed(int32_t encoder_ticks, float *prev_out) {
 	if (encoder_ticks != 0) {
 		// TODO: magic number 100000 - maybe some constant to take transmission into account
 //		raw_speed = 100000/encoder_ticks;
-		if (encoder_ticks > ENC_MAX_PULSE_VALUE / 2 )
+		if (encoder_ticks > ENC_MAX_PULSE_VALUE / 2)
 			encoder_ticks = encoder_ticks - ENC_MAX_PULSE_VALUE;
-		raw_speed = encoder_ticks*1000/(VELOCITY_CLOCK_TIME * ENC_PULSE_PER_ROTATION);
+		raw_speed = encoder_ticks * 1000
+				/ (VELOCITY_CLOCK_TIME * ENC_PULSE_PER_ROTATION);
 	} else {
 		raw_speed = 0;
 	}

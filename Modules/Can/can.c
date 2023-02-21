@@ -4,8 +4,10 @@
 #include <stm32f4xx_hal_cortex.h>
 #include <stm32f4xx_hal_rcc.h>
 #include "leds/leds.h"
+//#include "motors/pwm.h"
 #include "motors/motor_controller.h"
 #include "motors/motor_interface.h"
+//#include "motors/motor_structure.h
 
 /* USER CODE BEGIN 0 */
 
@@ -25,7 +27,7 @@ static uint8_t PID_max_Speed = 0u;
 
 CAN_HandleTypeDef hcan1;
 // CAN_HandleTypeDef hcan2;
-static singleMotorParam param[3];
+
 
 void HAL_CAN_RxFifo0MsgPendingCallback(CAN_HandleTypeDef *hcan) {
 
@@ -61,22 +63,15 @@ void HAL_CAN_RxFifo0MsgPendingCallback(CAN_HandleTypeDef *hcan) {
 
 
 
-		int8_t refValue = CAN_RxMsg[0];
+		int8_t refValue = CAN_RxMsg[1];
 		PID_reference_Value_left = ((int16_t) refValue) * PID_max_Speed;
-		refValue = CAN_RxMsg[1];
+		refValue = CAN_RxMsg[2];
 		PID_reference_Value_right = ((int16_t) refValue) * PID_max_Speed;
 		//}
 
-		param[0].id = LR;
-		param[0].speed = 100;
+		//TODO side
+		updateSpeed(PID_reference_Value_left);
 
-		param[1].id = LM;
-		param[1].speed = 100;
-
-		param[2].id = LF;
-		param[2].speed = 100;
-
-		setOneSideSpeeds(param, 3);
 	}
 
 //	if (HAL_CAN_Receive_IT(hcan, CAN_RX_FIFO0) != HAL_OK) {
@@ -85,7 +80,6 @@ void HAL_CAN_RxFifo0MsgPendingCallback(CAN_HandleTypeDef *hcan) {
 //	}
 	Leds_toggleLed(LED3);
 }
-
 
 
 void HAL_CAN_RxFifo1MsgPendingCallback(CAN_HandleTypeDef *hcan) {

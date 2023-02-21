@@ -3,6 +3,7 @@
  * @brief Provides high level can driver.
  */
 #include <stm32f4xx_hal_can.h>
+#include "motors/motor_interface.h"
 /* Define to prevent recursive inclusion -------------------------------------*/
 #ifndef MODULES_CAN_CAN_H
 #define MODULES_CAN_CAN_H

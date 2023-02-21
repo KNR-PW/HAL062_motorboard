@@ -13,6 +13,7 @@
 #include "encoder_consts.h"
 #include "tim_handlers.h"
 #include "motor_controller.h"
+#include "motor_interface.h"
 #include <stdint.h>
 
 TIM_HandleTypeDef htim1; //encoder 1 - TIM1
@@ -30,8 +31,6 @@ int32_t g_encoder3Tick;
 volatile int16_t motor1Velocity;
 volatile int16_t motor2Velocity;
 volatile int16_t motor3Velocity;
-
-
 
 
 void InitTimers() {
@@ -166,7 +165,7 @@ void TIM7_Init(void) {
 	TIM_MasterConfigTypeDef sMasterConfig = { 0 };
 
 	htim7.Instance = TIM7;
-	htim7.Init.Prescaler = 15999;
+	htim7.Init.Prescaler = 39999;
 	htim7.Init.CounterMode = TIM_COUNTERMODE_UP;
 	htim7.Init.Period = VELOCITY_CLOCK_TIME - 1;
 	htim7.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
@@ -283,6 +282,10 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim){
 		__HAL_TIM_SET_COUNTER(&htim1, 0);
 		__HAL_TIM_SET_COUNTER(&htim2, 0);
 		__HAL_TIM_SET_COUNTER(&htim3, 0);
+
+		updatePID();
+
+
 	}
 }
 

@@ -21,7 +21,7 @@ HAL_StatusTypeDef PWM_Init() {
 //	__HAL_RCC_TIM5_CLK_ENABLE();	// 16MHz
 
 	hPwm.Instance = TIM5;
-	hPwm.Init.Prescaler = 32-1;
+	hPwm.Init.Prescaler = 80-1;
 	hPwm.Init.CounterMode = TIM_COUNTERMODE_UP;
 	hPwm.Init.Period = 9999;
 	hPwm.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
@@ -76,6 +76,10 @@ HAL_StatusTypeDef PWM_Init() {
 	HAL_TIM_PWM_Start(&hPwm, TIM_CHANNEL_1);
 	HAL_TIM_PWM_Start(&hPwm, TIM_CHANNEL_2);
 	HAL_TIM_PWM_Start(&hPwm, TIM_CHANNEL_3);
+
+	PWM_SetDutyCycle(TIM_CHANNEL_1, 750);
+	PWM_SetDutyCycle(TIM_CHANNEL_2, 750);
+	PWM_SetDutyCycle(TIM_CHANNEL_3, 750);
 
 	return HAL_OK;
 }

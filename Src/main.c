@@ -17,13 +17,11 @@
 
 #include "motors/timers.h"
 #include "motors/motor_interface.h"
+//#include "motors/motor_controler.h"
+#include "motors/motor_structure.h"
 #include "motors/pwm.h"
 
-typedef enum {
-	LEFT_SIDE, RIGHT_SIDE
-} ROVER_SIDE;
-
-ROVER_SIDE roverSide;
+int velocity = 0;
 
 void SystemClock_Config(void);
 void Error_Handler(void);
@@ -32,7 +30,7 @@ void SysTick_Handler(void) {
 	static int work_led_cnt = 0u;
 	static bool work_led_state = false;
 	HAL_IncTick();
-	HAL_SYSTICK_IRQHandler();
+//	HAL_SYSTICK_IRQHandler();
 
 	if (work_led_state && work_led_cnt >= 100u) {
 		work_led_cnt = 0u;
@@ -45,13 +43,16 @@ void SysTick_Handler(void) {
 		Leds_turnOnLed(LED1);
 	}
 	work_led_cnt++;
+
+
 }
 
 int main(void) {
+	updateSpeed(0);
 	SystemClock_Config();
 
 	HAL_Init();
-
+	SysTick_Config(80000);
 	InitTimers();
 	PWM_Init();
 
@@ -59,35 +60,16 @@ int main(void) {
 	Leds_init();
 	Leds_welcomeFLash();
 
+	PWM_SetDutyCycle(TIM_CHANNEL_1, 750);
+	PWM_SetDutyCycle(TIM_CHANNEL_2, 750);
+	PWM_SetDutyCycle(TIM_CHANNEL_3, 750);
+
 	/* Loop forever */
+
 	while (1) {
-//		roverSide = LEFT_SIDE;
-//
-//		struct singleMotorParam param[3];
-//
-//
-//		if(roverSide == LEFT_SIDE){
-//		param[0].id = LR;
-//		param[0].speed = 0;
-//
-//		param[1].id = LM;
-//		param[1].speed = 0;
-//
-//		param[2].id = LF;
-//		param[2].speed = 0;
-//		}
-//
-//		if(roverSide == RIGHT_SIDE){
-//		param[0].id = RR;
-//		param[0].speed = 0;
-//
-//		param[1].id = RM;
-//		param[1].speed = 0;
-//
-//		param[2].id = RF;
-//		param[2].speed = 0;
-//		}
-//
+
+		updateSpeed(velocity);
+
 //		setOneSideSpeeds(param, 3);
 	}
 }
@@ -136,6 +118,7 @@ void SystemClock_Config(void) {
 	if (HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_2) != HAL_OK) {
 		Error_Handler();
 	}
+
 }
 
 void Error_Handler(void) {

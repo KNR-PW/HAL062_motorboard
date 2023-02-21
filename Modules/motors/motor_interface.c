@@ -33,6 +33,9 @@ float PIDOutMotor2 = 0;
 // variable stores output of PID controller for motor3
 float PIDOutMotor3 = 0;
 
+struct singleMotorParam param[3];
+
+
 struct Map speed_map[3] = { { .key = 0, .ptr = &previousSpeedMotor1 }, { .key =
 		1, .ptr = &previousSpeedMotor2 }, { .key = 2, .ptr =
 		&previousSpeedMotor3 } };
@@ -89,3 +92,17 @@ bool setOneSideSpeeds(struct singleMotorParam *params, int array_length) {
 
 	return true;
 }
+
+bool updateSpeed(int speed){
+	param[0].speed = speed;
+	param[0].id = LR;
+	param[1].speed = speed;
+	param[1].id = LM;
+	param[2].speed = speed;
+	param[2].id = LF;
+}
+
+bool updatePID(){
+	setOneSideSpeeds(param, 3);
+}
+
