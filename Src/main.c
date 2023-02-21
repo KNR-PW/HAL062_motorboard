@@ -53,12 +53,12 @@ int main(void) {
 
 	HAL_Init();
 	SysTick_Config(80000);
-	InitTimers();
 	PWM_Init();
+	InitTimers();
 
 	MX_CAN1_Init();
-	Leds_init();
-	Leds_welcomeFLash();
+//	Leds_init();
+//	Leds_welcomeFLash();
 
 	PWM_SetDutyCycle(TIM_CHANNEL_1, 750);
 	PWM_SetDutyCycle(TIM_CHANNEL_2, 750);
@@ -68,7 +68,7 @@ int main(void) {
 
 	while (1) {
 
-		updateSpeed(velocity);
+//		updateSpeed(velocity);
 
 //		setOneSideSpeeds(param, 3);
 	}

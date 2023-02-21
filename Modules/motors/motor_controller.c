@@ -79,8 +79,7 @@ float getFilteredSpeed(int32_t encoder_ticks, float *prev_out) {
 //		raw_speed = 100000/encoder_ticks;
 		if (encoder_ticks > ENC_MAX_PULSE_VALUE / 2)
 			encoder_ticks = encoder_ticks - ENC_MAX_PULSE_VALUE;
-		raw_speed = encoder_ticks * 1000
-				/ (VELOCITY_CLOCK_TIME * ENC_PULSE_PER_ROTATION);
+		raw_speed = encoder_ticks * 1000/(VELOCITY_CLOCK_TIME * ENC_PULSE_PER_ROTATION);
 	} else {
 		raw_speed = 0;
 	}
