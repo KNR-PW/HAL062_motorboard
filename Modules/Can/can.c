@@ -28,7 +28,6 @@ static uint8_t PID_max_Speed = 0u;
 CAN_HandleTypeDef hcan1;
 // CAN_HandleTypeDef hcan2;
 
-
 void HAL_CAN_RxFifo0MsgPendingCallback(CAN_HandleTypeDef *hcan) {
 
 //	if (hcan->Instance == CAN1) {
@@ -44,7 +43,7 @@ void HAL_CAN_RxFifo0MsgPendingCallback(CAN_HandleTypeDef *hcan) {
 
 /// TODO: Check why there are three check; check what desktpo app sends
 //	if (CAN_RxHeader.StdId == 21) {
-	if(CAN_RxMsg[0] == 21){
+	if (CAN_RxMsg[0] == 21) {
 //		Can_Watchdog_Reset();
 		if (CAN_RxMsg[1] != 0x01) {
 //			PWM_stop();
@@ -57,11 +56,9 @@ void HAL_CAN_RxFifo0MsgPendingCallback(CAN_HandleTypeDef *hcan) {
 		}
 	}
 //	if (CAN_RxHeader.StdId == 20) {
-	if(CAN_RxMsg[0] == 20){
+	if (CAN_RxMsg[0] == 20) {
 //		Can_Watchdog_Reset();
 		//if (BOARD_ID > 0) {
-
-
 
 		int8_t refValue = CAN_RxMsg[1];
 		PID_reference_Value_left = ((int16_t) refValue) * PID_max_Speed;
@@ -69,9 +66,10 @@ void HAL_CAN_RxFifo0MsgPendingCallback(CAN_HandleTypeDef *hcan) {
 		PID_reference_Value_right = ((int16_t) refValue) * PID_max_Speed;
 		//}
 
-		//TODO side
-		updateSpeed(PID_reference_Value_left);
-
+		if (side == LEFT_SIDE)
+			updateSpeed(PID_reference_Value_left);
+		if (side == RIGHT_SIDE)
+			updateSpeed(PID_reference_Value_left);
 	}
 
 //	if (HAL_CAN_Receive_IT(hcan, CAN_RX_FIFO0) != HAL_OK) {
@@ -80,7 +78,6 @@ void HAL_CAN_RxFifo0MsgPendingCallback(CAN_HandleTypeDef *hcan) {
 //	}
 	Leds_toggleLed(LED3);
 }
-
 
 void HAL_CAN_RxFifo1MsgPendingCallback(CAN_HandleTypeDef *hcan) {
 

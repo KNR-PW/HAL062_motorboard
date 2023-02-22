@@ -30,18 +30,19 @@ typedef struct singleMotorParam {
 	MOTOR_ID id;
 	// speed of motor (value from -100 to 100)
 	int speed;
-}singleMotorParam;
+} singleMotorParam;
 
+typedef enum motorSide {
+	LEFT_SIDE, RIGHT_SIDE
+} motorSide;
 
-
-
+extern enum motorSide side;
 
 // @brief High-level function that should be placed in a continuous loop to control the speed of motors
 // @param params array of singleMotorParam structures for 3 motors from one side of the rover
 // @param array_length length of params array (is anticipated to be always 3 - 3 motors connected to one board)
 // @returns true if iteration succeeded, false otherwise
 bool setOneSideSpeeds(struct singleMotorParam *params, int array_length);
-
 
 bool updateSpeed(int speed);
 bool updatePID();
