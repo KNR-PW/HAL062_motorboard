@@ -67,9 +67,10 @@ void HAL_CAN_RxFifo0MsgPendingCallback(CAN_HandleTypeDef *hcan) {
 		//}
 
 		if (side == LEFT_SIDE)
-			updateSpeed(PID_reference_Value_left);
+			//left side has to be in other direction
+			updateSpeed(-PID_reference_Value_left);
 		if (side == RIGHT_SIDE)
-			updateSpeed(PID_reference_Value_left);
+			updateSpeed(PID_reference_Value_right);
 	}
 
 //	if (HAL_CAN_Receive_IT(hcan, CAN_RX_FIFO0) != HAL_OK) {

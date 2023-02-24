@@ -48,7 +48,6 @@ void SysTick_Handler(void) {
 }
 
 int main(void) {
-	updateSpeed(0);
 	SystemClock_Config();
 
 	HAL_Init();
@@ -57,18 +56,20 @@ int main(void) {
 	InitTimers();
 
 	MX_CAN1_Init();
-//	Leds_init();
-//	Leds_welcomeFLash();
+	Leds_init();
+	Leds_welcomeFLash();
 
 	PWM_SetDutyCycle(TIM_CHANNEL_1, 750);
 	PWM_SetDutyCycle(TIM_CHANNEL_2, 750);
 	PWM_SetDutyCycle(TIM_CHANNEL_3, 750);
 
 	/* Loop forever */
+	//find problem that motor speeds up imediatelly
+	updateSpeed(0);
 
 	while (1) {
 
-//		updateSpeed(velocity);
+		updateSpeed(velocity);
 
 //		setOneSideSpeeds(param, 3);
 	}
