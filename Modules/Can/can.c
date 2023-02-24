@@ -21,9 +21,9 @@ static uint8_t CAN_RxMsg[8];
 static CAN_TxHeaderTypeDef CAN_TxHeader;
 // static uint8_t CAN_TxData[8];
 
-volatile static uint8_t PID_reference_Value_left = 0u;
-volatile static uint8_t PID_reference_Value_right = 0u;
-static uint8_t PID_max_Speed = 0u;
+volatile static int8_t PID_reference_Value_left = 0u;
+volatile static int8_t PID_reference_Value_right = 0u;
+
 
 CAN_HandleTypeDef hcan1;
 // CAN_HandleTypeDef hcan2;
@@ -43,28 +43,37 @@ void HAL_CAN_RxFifo0MsgPendingCallback(CAN_HandleTypeDef *hcan) {
 
 /// TODO: Check why there are three check; check what desktpo app sends
 //	if (CAN_RxHeader.StdId == 21) {
-	if (CAN_RxMsg[0] == 21) {
-//		Can_Watchdog_Reset();
-		if (CAN_RxMsg[1] != 0x01) {
-//			PWM_stop();
-		} else if (CAN_RxMsg[2] != 0x01) {
-//			PWM_stop();
-		} else {
-			PWM_Init();
-//			PWM_start(); 	//engine start
-			PID_max_Speed = (int16_t) ((0.1) * CAN_RxMsg[3]);
-		}
-	}
+//	if (CAN_RxMsg[0] == 21) {
+////		Can_Watchdog_Reset();
+//		if (CAN_RxMsg[1] != 0x01) {
+////			PWM_stop();
+//		} else if (CAN_RxMsg[2] != 0x01) {
+////			PWM_stop();
+//		} else {
+//			// PWM_Init();
+////			PWM_start(); 	//engine start
+//			PID_max_Speed = (int16_t) ((0.1) * CAN_RxMsg[3]);
+//		}
+//	}
 //	if (CAN_RxHeader.StdId == 20) {
+	int8_t refValue = 0;
 	if (CAN_RxMsg[0] == 20) {
 //		Can_Watchdog_Reset();
 		//if (BOARD_ID > 0) {
+		if (CAN_RxMsg[1] < 5 && CAN_RxMsg[1] > -5)
+			refValue = 0;
+		else
+			refValue = CAN_RxMsg[1];
 
-		int8_t refValue = CAN_RxMsg[1];
-		PID_reference_Value_left = ((int16_t) refValue) * PID_max_Speed;
-		refValue = CAN_RxMsg[2];
-		PID_reference_Value_right = ((int16_t) refValue) * PID_max_Speed;
-		//}
+		PID_reference_Value_left = (int16_t) refValue;// * PID_max_Speed;
+
+
+		if (CAN_RxMsg[2] < 5 && CAN_RxMsg[2] > -5)
+			refValue = 0;
+		else
+			refValue = CAN_RxMsg[2];
+
+		PID_reference_Value_right = (int16_t) refValue;// * PID_max_Speed;
 
 		if (side == LEFT_SIDE)
 			//left side has to be in other direction

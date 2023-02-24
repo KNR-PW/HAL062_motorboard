@@ -69,7 +69,7 @@ int main(void) {
 
 	while (1) {
 
-		updateSpeed(velocity);
+//		updateSpeed(velocity);
 
 //		setOneSideSpeeds(param, 3);
 	}
@@ -125,4 +125,8 @@ void SystemClock_Config(void) {
 void Error_Handler(void) {
 	while (1) {
 	};
+}
+
+void WWDG_IRQHandler(){
+
 }
