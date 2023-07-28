@@ -6,6 +6,8 @@
 #ifndef MODULES_LEDS_LEDS_H
 #define MODULES_LEDS_LEDS_H
 
+#include <stm32f4xx_hal.h>
+
 #define LED_1		GPIO_PIN_7
 #define LED_2		GPIO_PIN_8
 #define LED_3       GPIO_PIN_9

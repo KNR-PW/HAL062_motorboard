@@ -6,46 +6,19 @@
  ******************************************************************************
  */
 
-#include <can/can.h>
 #include <stm32f4xx_hal.h>
-#include <stm32f4xx_hal_conf.h>
-#include <stm32f4xx_hal_rcc.h>
-#include <stm32f4xx.h>
-#include <stdbool.h>
 
+#include "Can/can.h"
 #include "leds/leds.h"
 
 #include "motors/timers.h"
 #include "motors/motor_interface.h"
-//#include "motors/motor_controler.h"
-#include "motors/motor_structure.h"
 #include "motors/pwm.h"
 
 int velocity = 0;
 
 void SystemClock_Config(void);
 void Error_Handler(void);
-
-void SysTick_Handler(void) {
-	static int work_led_cnt = 0u;
-	static bool work_led_state = false;
-	HAL_IncTick();
-//	HAL_SYSTICK_IRQHandler();
-
-	if (work_led_state && work_led_cnt >= 100u) {
-		work_led_cnt = 0u;
-		work_led_state = false;
-		Leds_turnOffLed(LED1);
-	}
-	if (!work_led_state && work_led_cnt >= 400u) {
-		work_led_cnt = 0u;
-		work_led_state = true;
-		Leds_turnOnLed(LED1);
-	}
-	work_led_cnt++;
-
-
-}
 
 int main(void) {
 	SystemClock_Config();
@@ -55,17 +28,17 @@ int main(void) {
 	PWM_Init();
 	InitTimers();
 
-	MX_CAN1_Init();
+	CAN_Init();
 	Leds_init();
 	Leds_welcomeFLash();
 
-	PWM_SetDutyCycle(TIM_CHANNEL_1, 750);
-	PWM_SetDutyCycle(TIM_CHANNEL_2, 750);
-	PWM_SetDutyCycle(TIM_CHANNEL_3, 750);
+//	PWM_SetDutyCycle(TIM_CHANNEL_1, 750);
+//	PWM_SetDutyCycle(TIM_CHANNEL_2, 750);
+//	PWM_SetDutyCycle(TIM_CHANNEL_3, 750);
 
 	/* Loop forever */
 	//find problem that motor speeds up imediatelly
-	updateSpeed(0);
+//	updateSpeed(0);
 
 	while (1) {
 
@@ -113,7 +86,7 @@ void SystemClock_Config(void) {
 			| RCC_CLOCKTYPE_PCLK1 | RCC_CLOCKTYPE_PCLK2;
 	RCC_ClkInitStruct.SYSCLKSource = RCC_SYSCLKSOURCE_PLLCLK;
 	RCC_ClkInitStruct.AHBCLKDivider = RCC_SYSCLK_DIV1;
-	RCC_ClkInitStruct.APB1CLKDivider = RCC_HCLK_DIV4;
+	RCC_ClkInitStruct.APB1CLKDivider = RCC_HCLK_DIV2;
 	RCC_ClkInitStruct.APB2CLKDivider = RCC_HCLK_DIV1;
 
 	if (HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_2) != HAL_OK) {

@@ -9,7 +9,7 @@
 #ifndef MODULES_MOTORS_MOTOR_STRUCTURE_H
 #define MODULES_MOTORS_MOTOR_STRUCTURE_H
 
-#include <stdint.h>
+//#include <stdint.h>
 #include "motors/motor_interface.h"
 
 
