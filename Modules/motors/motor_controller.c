@@ -25,8 +25,7 @@ float PIDSpeedController(float referenceSpeed, float actualSpeed,
 	speed_error = referenceSpeed - actualSpeed;
 
 	//regulation only with integration (no P or D)
-	integrator_speed = PID_SPEED_KiTs * speed_error + saturation * PID_SPEED_Kp
-			+ currentRegOut * PID_SPEED_Kk;
+	integrator_speed = PID_K * speed_error + PID_Ti * speed_error + PID_Td * speed_error;
 
 	float out = (float) integrator_speed;
 

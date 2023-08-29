@@ -1,6 +1,8 @@
 #include "stm32f4xx_it.h"
 #include <stm32f4xx_hal_can.h>
 #include "Can/can.h"
+#include <stdbool.h>
+#include "leds/leds.h"
 
 extern CAN_HandleTypeDef hcan1;
 
@@ -60,18 +62,6 @@ void SysTick_Handler(void) {
 
 }
 
-void CAN1_TX_IRQHandler(void) {
-	HAL_CAN_IRQHandler(&hcan1);
-}
 
-
-void CAN1_RX0_IRQHandler(void) {
-	HAL_CAN_IRQHandler(&hcan1);
-}
-
-
-void CAN1_RX1_IRQHandler(void) {
-	HAL_CAN_IRQHandler(&hcan1);
-}
 
 

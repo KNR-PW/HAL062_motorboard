@@ -2,6 +2,7 @@
 #include "leds/leds.h"
 #include "motors/motor_controller.h"
 #include "motors/motor_interface.h"
+#include "motors/pwm.h"
 
 static uint32_t CAN_TxMailbox;
 static uint8_t CAN_RxMsg[8];
@@ -30,7 +31,8 @@ void CAN_Init(void) {
 	hcan1.Init.ReceiveFifoLocked = DISABLE;
 	hcan1.Init.TransmitFifoPriority = DISABLE;
 	if (HAL_CAN_Init(&hcan1) != HAL_OK) {
-
+		volatile uint32_t b = 0;
+		b++;
 	}
 	sFilterConfig.FilterBank = 0u;
 	sFilterConfig.FilterMode = CAN_FILTERMODE_IDMASK;
@@ -47,7 +49,10 @@ void CAN_Init(void) {
 		b++;
 	}
 
-	HAL_CAN_Start(&hcan1);
+	if (HAL_CAN_Start(&hcan1) != HAL_OK) {
+		volatile uint32_t b = 0;
+		b++;
+	}
 
 	if (HAL_CAN_ActivateNotification(&hcan1, CAN_IT_RX_FIFO0_MSG_PENDING)
 			!= HAL_OK) {
@@ -60,37 +65,46 @@ void HAL_CAN_RxFifo0MsgPendingCallback(CAN_HandleTypeDef *hcan) {
 
 	HAL_CAN_GetRxMessage(&hcan1, CAN_RX_FIFO0, &CAN_RxHeader, CAN_RxMsg);
 
-	int8_t refValue = 0;
-	if (CAN_RxMsg[0] == 20) {
 
-		if (CAN_RxMsg[1] < 5 && CAN_RxMsg[1] > -5)
+	int8_t refValue = 0;
+	if (CAN_RxHeader.StdId == 20) {
+
+		if (CAN_RxMsg[0] < 25 && CAN_RxMsg[0] > -25)
+			refValue = 0;
+		else
+			refValue = CAN_RxMsg[0];
+
+		PID_reference_Value_left = (int16_t) refValue; // * PID_max_Speed;
+
+		if (CAN_RxMsg[1] < 25 && CAN_RxMsg[1] > -25)
 			refValue = 0;
 		else
 			refValue = CAN_RxMsg[1];
 
-		PID_reference_Value_left = (int16_t) refValue; // * PID_max_Speed;
-
-		if (CAN_RxMsg[2] < 5 && CAN_RxMsg[2] > -5)
-			refValue = 0;
-		else
-			refValue = CAN_RxMsg[2];
-
 		PID_reference_Value_right = (int16_t) refValue; // * PID_max_Speed;
 
-		if (side == LEFT_SIDE)
+		if (side == LEFT_SIDE){
 			//left side has to be in other direction
 			updateSpeed(-PID_reference_Value_left);
-		if (side == RIGHT_SIDE)
+//			PWM_SetDutyCycle(CHANNEL3, -2.5*refValue+750);
+//			PWM_SetDutyCycle(CHANNEL2, -2.5*refValue+750);
+//			PWM_SetDutyCycle(CHANNEL1, -2.5*refValue+750);
+		}
+		if (side == RIGHT_SIDE){
+//			PWM_SetDutyCycle(CHANNEL3, 2.5*refValue+750);
+//			PWM_SetDutyCycle(CHANNEL2, 2.5*refValue+750);
+//			PWM_SetDutyCycle(CHANNEL1, 2.5*refValue+750);
 			updateSpeed(PID_reference_Value_right);
 	}
 
 	Leds_toggleLed(LED3);
+	}
 }
 
 void HAL_CAN_RxFifo1MsgPendingCallback(CAN_HandleTypeDef *hcan) {
 
 	HAL_CAN_GetRxMessage(&hcan1, CAN_RX_FIFO1, &CAN_RxHeader, CAN_RxMsg);
-
+	Leds_toggleLed(LED3);
 }
 
 void Can_testMessage(void) {
@@ -109,3 +123,17 @@ void Can_testMessage(void) {
 	Leds_toggleLed(LED4);
 }
 
+
+void CAN1_TX_IRQHandler(void) {
+	HAL_CAN_IRQHandler(&hcan1);
+}
+
+
+void CAN1_RX0_IRQHandler(void) {
+	HAL_CAN_IRQHandler(&hcan1);
+}
+
+
+void CAN1_RX1_IRQHandler(void) {
+	HAL_CAN_IRQHandler(&hcan1);
+}

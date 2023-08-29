@@ -19,13 +19,13 @@ const float PID_SPEED_Kp = 0;
 // TODO: no idea how to name this pid constant setting
 const int PID_SPEED_Kk = 1;
 // TODO: no idea how to name this pid constant setting
-const float PID_SPEED_KiTs = 0.05;
+const float PID_SPEED_KiTs = 1;
 
 // alpha parameter of LPF filter (alpha = dt / (RC + dt))
 const float LPF_ALPHA = 1;
 
 const float PID_K = 0;
 const float PID_Td = 0;
-const float PID_Ti = 0.00007;
+const float PID_Ti = 30;
 
 #endif /* MODULES_MOTORS_CONSTS_H */

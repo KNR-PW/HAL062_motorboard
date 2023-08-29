@@ -1,7 +1,4 @@
 #include "Can/can.h"
-//#include <stm32f4xx_hal_gpio.h>
-//#include <stm32f4xx_hal_can.h>
-//#include <stm32f4xx_hal_rcc.h>
 #include <stm32f4xx_hal.h>
 
 extern CAN_HandleTypeDef hcan1;
@@ -36,6 +33,8 @@ void HAL_CAN_MspInit(CAN_HandleTypeDef *hcan) {
 		HAL_NVIC_EnableIRQ(CAN1_TX_IRQn);
 		HAL_NVIC_SetPriority(CAN1_RX0_IRQn, 0, 0);
 		HAL_NVIC_EnableIRQ(CAN1_RX0_IRQn);
+		HAL_NVIC_SetPriority(CAN1_RX1_IRQn, 0, 0);
+		HAL_NVIC_EnableIRQ(CAN1_RX1_IRQn);
 
 	}
 
@@ -55,6 +54,7 @@ void HAL_CAN_MspDeInit(CAN_HandleTypeDef *hcan) {
 		/* CAN1 interrupt DeInit */
 		HAL_NVIC_DisableIRQ(CAN1_TX_IRQn);
 		HAL_NVIC_DisableIRQ(CAN1_RX0_IRQn);
+		HAL_NVIC_DisableIRQ(CAN1_RX1_IRQn);
 
 	}
 

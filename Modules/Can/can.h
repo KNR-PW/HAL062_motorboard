@@ -4,6 +4,8 @@
 
 #include <stm32f4xx_hal_can.h>
 
+extern CAN_HandleTypeDef hcan1;
+
 void CAN_Init(void);
 
 void Can_testMessage(void);

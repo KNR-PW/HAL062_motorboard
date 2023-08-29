@@ -16,8 +16,8 @@
 #define PWM2_PIN GPIO_PIN_1
 #define PWM3_PIN GPIO_PIN_2
 
-/* PWM constants for 16MHz clock */
-const uint32_t PWM_PRESCALER = 32-1;
+/* PWM constants for 80/40MHz clock */
+const uint32_t PWM_PRESCALER = 160-1;
 const uint32_t PWM_PERIOD = 10000-1;
 const uint32_t PWM_REPETITION_COUNTER = 1;
 
