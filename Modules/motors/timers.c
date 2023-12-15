@@ -9,7 +9,7 @@
 //#include <stm32f4xx_hal.h> // this include replaces including <stm32f4xx_hal_tim.h>,
 // including only <stm32f4xx_hal_tim.h> causes compilation errors
 #include "timers.h"
-#include "pwm_consts.h"
+//#include "pwm_consts.h"
 #include "encoder_consts.h"
 #include "tim_handlers.h"
 #include "motor_controller.h"
@@ -144,22 +144,22 @@ void TIM3_Init() {
 	}
 }
 
-void TIM5_Init() {
-	htim5.Instance = TIM5;
-	htim5.Init.Prescaler = PWM_PRESCALER;
-	htim5.Init.CounterMode = TIM_COUNTERMODE_UP;
-	htim5.Init.Period = PWM_PERIOD;
-	htim5.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
-	htim5.Init.RepetitionCounter = PWM_REPETITION_COUNTER;
-	htim5.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_ENABLE;
-	if (HAL_TIM_PWM_Init(&htim5) != HAL_OK) {
-		// TODO: error handling needed
-	}
-	if (HAL_TIM_PWM_Start(&htim5, TIM_CHANNEL_1 | TIM_CHANNEL_2 | TIM_CHANNEL_3)
-			!= HAL_OK) {
-		// TODO: error handling needed
-	}
-}
+//void TIM5_Init() {
+//	htim5.Instance = TIM5;
+//	htim5.Init.Prescaler = PWM_PRESCALER;
+//	htim5.Init.CounterMode = TIM_COUNTERMODE_UP;
+//	htim5.Init.Period = PWM_PERIOD;
+//	htim5.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
+//	htim5.Init.RepetitionCounter = PWM_REPETITION_COUNTER;
+//	htim5.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_ENABLE;
+//	if (HAL_TIM_PWM_Init(&htim5) != HAL_OK) {
+//		// TODO: error handling needed
+//	}
+//	if (HAL_TIM_PWM_Start(&htim5, TIM_CHANNEL_1 | TIM_CHANNEL_2 | TIM_CHANNEL_3)
+//			!= HAL_OK) {
+//		// TODO: error handling needed
+//	}
+//}
 
 void TIM7_Init(void) {
 	TIM_MasterConfigTypeDef sMasterConfig = { 0 };

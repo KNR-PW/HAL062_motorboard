@@ -14,18 +14,17 @@ const int MAX_BOARD_SPEED = 2000;
 // speed ramp (higher value causes slower acceleration)
 const int PID_SPEED_RAMP = 1;
 
-// TODO: no idea how to name this pid constant setting
-const float PID_SPEED_Kp = 0;
-// TODO: no idea how to name this pid constant setting
-const int PID_SPEED_Kk = 1;
-// TODO: no idea how to name this pid constant setting
-const float PID_SPEED_KiTs = 1;
-
 // alpha parameter of LPF filter (alpha = dt / (RC + dt))
 const float LPF_ALPHA = 1;
 
-const float PID_K = 0;
+const float Tp = 0.1; // 100 ms = 8 Mhz clock / (80 kHz tim7 prescaler * 10 tim7 period) -> encoders measure
+
+const float PID_K = 0.01;
 const float PID_Td = 0;
-const float PID_Ti = 30;
+const float PID_Ti = 10000;
+
+const float r0 = PID_K * (1 + Tp / (2*PID_Ti) + PID_Td/Tp);
+const float r1 = PID_K * (Tp/(2*PID_Ti) - 2 * PID_Td / Tp - 1);
+const float r2 = PID_K * PID_Td/ Tp;
 
 #endif /* MODULES_MOTORS_CONSTS_H */

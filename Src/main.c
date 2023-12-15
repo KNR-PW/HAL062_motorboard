@@ -15,8 +15,12 @@
 #include "motors/motor_interface.h"
 #include "motors/pwm.h"
 
-int velocity = 0;
+int d = 6000;
+
+static int speed = 6000;
 extern struct singleMotorParam param[3];
+
+//extern enum motorSide side = LEFT_SIDE;
 
 void SystemClock_Config(void);
 void Error_Handler(void);
@@ -32,18 +36,28 @@ int main(void) {
 	Leds_welcomeFLash();
 
 	PWM_Init();
+	updateSpeed(0);
 	InitTimers();
-
 
 
 
 	/* Loop forever */
 	//find problem that motor speeds up imediatelly
 //	updateSpeed(0);
+//	param[0].speed = speed;
+//	param[0].id = LR;
+//	param[1].speed = speed;
+//	param[1].id = LM;
+//	param[2].speed = speed;
+//	param[2].id = LF;
+
 
 	while (1) {
 
+//		updateSpeed(speed);
+
 //		setOneSideSpeeds(param, 3);
+		PWM_SetDutyCycle(CHANNEL2, d);
 	}
 }
 

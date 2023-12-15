@@ -10,50 +10,52 @@
 #include "control_consts.h"
 #include "encoder_consts.h"
 
-float last_error = 0;
-float derivative_error = 0;
-float integrator_error = 0;
-
+static float prev_error = 0;
+static float prev_prev_error = 0;
+static float speed_error = 0;
+static float u = 0;
 
 float PIDSpeedController(float referenceSpeed, float actualSpeed,
-		float currentRegOut) {
+		float prev_u) {
 
-	float speed_error = 0;
-	float integrator_speed = 0;
-	static float saturation;
 
 	speed_error = referenceSpeed - actualSpeed;
 
-	//regulation only with integration (no P or D)
-	integrator_speed = PID_K * speed_error + PID_Ti * speed_error + PID_Td * speed_error;
+	u = r2 * prev_prev_error + r1 * prev_error + r0 * speed_error + prev_u;
 
-	float out = (float) integrator_speed;
+	prev_prev_error = prev_error;
+	prev_error = speed_error;
+
+
+	int16_t out = (int16_t)(u);
 
 	//PWM can be sat max as 1000 so in order to remember how much "over" max PWM integrator is, there is saturation
-	if (referenceSpeed > 0) {
-		if (out >= (PWM_MAX_DUTY - 750)) {
-			saturation = -out + (PWM_MAX_DUTY - 750);
-			out = PWM_MAX_DUTY - 750;
-		} else if (out <= 0) {
-			saturation = -out;
-			out = 0;
-		} else {
-			saturation = 0;
-		}
-	} else if (referenceSpeed < 0) {
-		if (out >= 0) {
-			saturation = -out;
-			out = 0;
-		} else if (out <= -(PWM_MAX_DUTY - 750)) {
-			saturation = -out - (PWM_MAX_DUTY - 750);
-			out = -(PWM_MAX_DUTY - 750);
-		} else {
-			saturation = 0;
-		}
-	} else if (referenceSpeed == 0) {
-		out = 0;
-		integrator_speed = 0;
-	}
+//	if (referenceSpeed > 0) {
+//		if (out >= (PWM_MAX_DUTY - 750)) {
+//			saturation = -out + (PWM_MAX_DUTY - 750);
+//			out = PWM_MAX_DUTY - 750;
+//		} else if (out <= 0) {
+//			saturation = -out;
+//			out = 0;
+//		} else {
+//			saturation = 0;
+//		}
+//	} else if (referenceSpeed < 0) {
+//		if (out >= 0) {
+//			saturation = -out;
+//			out = 0;
+//		} else if (out <= -(PWM_MAX_DUTY - 750)) {
+//			saturation = -out - (PWM_MAX_DUTY - 750);
+//			out = -(PWM_MAX_DUTY - 750);
+//		} else {
+//			saturation = 0;
+//		}
+//	} else if (referenceSpeed == 0) {
+//		out = 0;
+//		integrator_speed = 0;
+//	}
+	if(out > 250) out = 250;
+	else if(out < -250) out = -250;
 
 	return out;
 

@@ -46,7 +46,6 @@
 									<listOptionValue builtIn="false" value="../Inc"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/motorboard/Modules}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/rover_driver_f446/Inc}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/motorboard/Modules}&quot;"/>
 								</option>
 								<inputType id="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.c.compiler.input.c.408935861" superClass="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.c.compiler.input.c"/>
 							</tool>
@@ -424,5 +423,6 @@
 		<configuration configurationName="Release">
 			<resource resourceType="PROJECT" workspacePath="/motorboard"/>
 		</configuration>
+		<configuration configurationName="motor1"/>
 	</storageModule>
 </cproject>
