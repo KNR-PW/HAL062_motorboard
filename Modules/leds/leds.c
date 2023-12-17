@@ -6,14 +6,11 @@
  ******************************************************************************
  */
 
-#include <stm32f4xx_hal_rcc.h>
-#include <stm32f4xx_hal_gpio.h>
-#include <stm32f4xx_hal.h> // Simple HAL delay
+//#include <stm32f4xx_hal.h> // Simple HAL delay
 
 #include "leds.h"
 
-void Leds_init(void)
-{
+void Leds_init(void) {
 	GPIO_InitTypeDef gpio;
 	__HAL_RCC_GPIOB_CLK_ENABLE();
 	gpio.Pin = GPIO_PIN_7 | GPIO_PIN_8 | GPIO_PIN_9 | GPIO_PIN_10;
@@ -23,8 +20,8 @@ void Leds_init(void)
 	HAL_GPIO_Init(GPIOB, &gpio);
 }
 
-void Leds_turnOnLed(Leds_ID ledId){
-	switch(ledId){
+void Leds_turnOnLed(Leds_ID ledId) {
+	switch (ledId) {
 	case LED1:
 		HAL_GPIO_WritePin(GPIOB, LED_1, GPIO_PIN_SET);
 		break;
@@ -40,8 +37,8 @@ void Leds_turnOnLed(Leds_ID ledId){
 	}
 }
 
-void Leds_turnOffLed(Leds_ID ledId){
-	switch(ledId){
+void Leds_turnOffLed(Leds_ID ledId) {
+	switch (ledId) {
 	case LED1:
 		HAL_GPIO_WritePin(LEDS_PORT, LED_1, GPIO_PIN_RESET);
 		break;
@@ -57,8 +54,8 @@ void Leds_turnOffLed(Leds_ID ledId){
 	}
 }
 
-void Leds_toggleLed(Leds_ID ledId){
-	switch(ledId){
+void Leds_toggleLed(Leds_ID ledId) {
+	switch (ledId) {
 	case LED1:
 		HAL_GPIO_TogglePin(LEDS_PORT, LED_1);
 		break;
@@ -74,7 +71,7 @@ void Leds_toggleLed(Leds_ID ledId){
 	}
 }
 
-void Leds_welcomeFLash(void){
+void Leds_welcomeFLash(void) {
 	Leds_turnOnLed(LED1);
 	Leds_turnOnLed(LED2);
 	Leds_turnOnLed(LED3);
