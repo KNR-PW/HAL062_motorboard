@@ -63,7 +63,7 @@ int main(void) {
 
 TIM_HandleTypeDef htim4;
 
-void TIM4_IRQHandler(void) {
+void TIM4_IRQHandle3r(void) {
 	HAL_TIM_IRQHandler(&htim4);
 }
 
@@ -99,6 +99,7 @@ void SystemClock_Config(void) {
 	                              |RCC_CLOCKTYPE_PCLK1|RCC_CLOCKTYPE_PCLK2;
 	  RCC_ClkInitStruct.SYSCLKSource = RCC_SYSCLKSOURCE_PLLCLK;
 	  RCC_ClkInitStruct.AHBCLKDivider = RCC_SYSCLK_DIV1;
+	  /* Setting timers prescaler, so the timer is 80Mhz*/
 	  RCC_ClkInitStruct.APB1CLKDivider = RCC_HCLK_DIV2;
 	  RCC_ClkInitStruct.APB2CLKDivider = RCC_HCLK_DIV1;
 

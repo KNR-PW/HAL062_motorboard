@@ -9,6 +9,7 @@
 #include <stm32f4xx_hal.h>
 #include "pwm.h"
 #include "timers.h"
+#include "pwm_consts.h"
 
 TIM_HandleTypeDef hPwm;
 
@@ -18,14 +19,22 @@ HAL_StatusTypeDef PWM_Init() {
 	TIM_MasterConfigTypeDef sMasterConfig = { 0 };
 	TIM_OC_InitTypeDef sConfigOC = { 0 };
 
-	__HAL_RCC_TIM5_CLK_ENABLE();	// 16MHz
+	__HAL_RCC_TIM5_CLK_ENABLE();	// 80MHz
+
+//	hPwm.Instance = TIM5;
+//	hPwm.Init.Prescaler = 16-1;
+//	hPwm.Init.CounterMode = TIM_COUNTERMODE_UP;
+//	hPwm.Init.Period = 99999;
+//	hPwm.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
+//	hPwm.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
 
 	hPwm.Instance = TIM5;
-	hPwm.Init.Prescaler = 16-1;
+	hPwm.Init.Prescaler = PWM_PRESCALER;
 	hPwm.Init.CounterMode = TIM_COUNTERMODE_UP;
-	hPwm.Init.Period = 99999;
+	hPwm.Init.Period = PWM_PERIOD;
 	hPwm.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
-	hPwm.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
+	hPwm.Init.RepetitionCounter = PWM_REPETITION_COUNTER;
+	hPwm.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_ENABLE;
 
 	if (HAL_TIM_PWM_Init(&hPwm) != HAL_OK) {
 		//Error_Handler();
