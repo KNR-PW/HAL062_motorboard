@@ -63,8 +63,12 @@ float PIDSpeedController(float referenceSpeed, float actualSpeed,
 	out = (int16_t)(u_3);
 	}
 
-	if(out > 2500) out = 2500;
-	else if(out < -2500) out = -2500;
+//	if(out > 1000) out = 1000;
+//	else if(out < -1000) out = -1000;
+
+	if(referenceSpeed == 0){
+		out = 0;
+	}
 
 	return out;
 
@@ -85,13 +89,14 @@ float lowPassFilter(float curr_in, float *prev_out) {
 float getFilteredSpeed(int32_t encoder_ticks, float *prev_out) {
 	static float raw_speed;
 	if (encoder_ticks != 0) {
-		if (encoder_ticks > ENC_MAX_PULSE_VALUE / 2)
+		if (encoder_ticks > ENC_MAX_PULSE_VALUE / 2.0)
 			encoder_ticks = encoder_ticks - ENC_MAX_PULSE_VALUE;
-		raw_speed = encoder_ticks * 1000/(VELOCITY_CLOCK_TIME * ENC_PULSE_PER_ROTATION);
+		raw_speed = (float)encoder_ticks * 1000.0/((float)VELOCITY_CLOCK_TIME * (float)ENC_PULSE_PER_ROTATION);
 	} else {
-		raw_speed = 0;
+		raw_speed = 0.0;
 	}
-	float lpf_speed = lowPassFilter(raw_speed, prev_out);
+	raw_speed = 100.0*raw_speed*3.0; // 100 is 1 rotate per sec
+//	float lpf_speed = lowPassFilter(raw_speed, prev_out);
 
 	return raw_speed;
 }

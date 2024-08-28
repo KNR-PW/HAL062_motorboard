@@ -10,6 +10,7 @@
 #define MOTORS_TIMERS_H_
 
 #include <stm32f4xx_hal.h>
+#include "can/can.h"
 
 // [Timer - Encoder - Pin] mapping for our custom motor board
 // TIM1_CH1 - ENK1_A - PA8
@@ -48,7 +49,7 @@ void TIM2_Init();
 void TIM3_Init();
 
 // @brief Initialize PWM timer
-void TIM5_Init();
+//void TIM5_Init();
 
 // @brief Initialize timer for measuring speed
 void TIM7_Init(void);

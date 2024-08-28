@@ -6,15 +6,12 @@
  ******************************************************************************
  */
 
-//#include <stm32f4xx_hal.h> // this include replaces including <stm32f4xx_hal_tim.h>,
-// including only <stm32f4xx_hal_tim.h> causes compilation errors
+#include <stdint.h>
 #include "timers.h"
-//#include "pwm_consts.h"
 #include "encoder_consts.h"
-#include "tim_handlers.h"
 #include "motor_controller.h"
 #include "motor_interface.h"
-#include <stdint.h>
+
 
 TIM_HandleTypeDef htim1; //encoder 1 - TIM1
 TIM_HandleTypeDef htim2; // encoder 2 - TIM2
@@ -32,6 +29,8 @@ volatile int16_t motor1Velocity;
 volatile int16_t motor2Velocity;
 volatile int16_t motor3Velocity;
 
+extern bool speedReceived;
+extern uint8_t speedResetCounter;
 
 void InitTimers() {
 	TIM1_Init();
@@ -284,6 +283,19 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim){
 		__HAL_TIM_SET_COUNTER(&htim3, 0);
 
 		updatePID();
+
+		if(speedReceived){
+			if(speedResetCounter<50){
+				speedResetCounter++;
+			}
+			else{
+				speedResetCounter = 0;
+				speedReceived = false;
+			}
+		}
+		else{
+			updateSpeed(0);
+		}
 
 
 	}

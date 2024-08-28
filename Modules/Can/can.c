@@ -1,3 +1,11 @@
+/**
+ ******************************************************************************
+ * @file           : can.c
+ * @author         : K. Czechowicz, A. Rybojad, J. Prokopczuk, D. Mucha
+ * @brief          : Communication threw CAN
+ ******************************************************************************
+ */
+
 #include "Can/can.h"
 #include "leds/leds.h"
 #include "motors/motor_controller.h"
@@ -10,10 +18,22 @@ static uint8_t CAN_RxMsg[8];
 static CAN_RxHeaderTypeDef CAN_RxHeader;
 static CAN_TxHeaderTypeDef CAN_TxHeader;
 
-volatile static int8_t PID_reference_Value_left = 0u;
-volatile static int8_t PID_reference_Value_right = 0u;
+volatile static int16_t PID_reference_Value_left = 0u;
+volatile static int16_t PID_reference_Value_right = 0u;
+
+//static float speed_multiplier = 1.0;
+static uint8_t allow_run = 0;
+
+union F2UI {
+	uint32_t ui;
+	float f;
+};
+
+union F2UI speed_multiplier = { 1065353216 };
 
 CAN_HandleTypeDef hcan1;
+bool speedReceived;
+uint8_t speedResetCounter;
 
 void CAN_Init(void) {
 	CAN_FilterTypeDef sFilterConfig;
@@ -65,46 +85,71 @@ void HAL_CAN_RxFifo0MsgPendingCallback(CAN_HandleTypeDef *hcan) {
 
 	HAL_CAN_GetRxMessage(&hcan1, CAN_RX_FIFO0, &CAN_RxHeader, CAN_RxMsg);
 
-
 	int8_t refValue = 0;
 	if (CAN_RxHeader.StdId == 20) {
+		speedReceived = true;
+		speedResetCounter = 0;
 
-		if (CAN_RxMsg[0] < 25 && CAN_RxMsg[0] > -25)
-			refValue = 0;
-		else
-			refValue = CAN_RxMsg[0];
+		refValue = CAN_RxMsg[0];
 
-		PID_reference_Value_left = (int16_t) refValue; // * PID_max_Speed;
+		PID_reference_Value_left = (int16_t) (((float) refValue)
+				* speed_multiplier.f); // * PID_max_Speed;
+		if ((PID_reference_Value_left < 10 && PID_reference_Value_left > -10)
+				|| allow_run == 0)
+			PID_reference_Value_left = 0;
 
-		if (CAN_RxMsg[1] < 25 && CAN_RxMsg[1] > -25)
-			refValue = 0;
-		else
-			refValue = CAN_RxMsg[1];
+		refValue = CAN_RxMsg[1];
 
-		PID_reference_Value_right = (int16_t) refValue; // * PID_max_Speed;
+		PID_reference_Value_right = (int16_t) (((float) refValue)
+				* speed_multiplier.f); // * PID_max_Speed;
+		if ((PID_reference_Value_right < 10 && PID_reference_Value_right > -10)
+				|| allow_run == 0)
+			PID_reference_Value_right = 0;
 
-		if (side == LEFT_SIDE){
-			//left side has to be in other direction
-			updateSpeed(-PID_reference_Value_left);
-//			PWM_SetDutyCycle(CHANNEL3, -2.5*refValue+750);
-//			PWM_SetDutyCycle(CHANNEL2, -2.5*refValue+750);
-//			PWM_SetDutyCycle(CHANNEL1, -2.5*refValue+750);
+		if (side == LEFT_SIDE) {
+
+			updateSpeed(-PID_reference_Value_left); //<left side has to be in other direction
+
 		}
-		if (side == RIGHT_SIDE){
-//			PWM_SetDutyCycle(CHANNEL3, 2.5*refValue+750);
-//			PWM_SetDutyCycle(CHANNEL2, 2.5*refValue+750);
-//			PWM_SetDutyCycle(CHANNEL1, 2.5*refValue+750);
+		if (side == RIGHT_SIDE) {
+
 			updateSpeed(PID_reference_Value_right);
+		}
+		Leds_toggleLed(LED3);
+	} else if (CAN_RxHeader.StdId == 21) {
+		speed_multiplier.ui = CAN_RxMsg[3] | (CAN_RxMsg[2] << 8)
+				| (CAN_RxMsg[1] << 16) | (CAN_RxMsg[0] << 24);
+
+		Leds_toggleLed(LED3);
+	} else if (CAN_RxHeader.StdId == 22) {
+		if (CAN_RxMsg[0] == 1 && CAN_RxMsg[1] == 1 && CAN_RxMsg[2] == 1)
+			allow_run = 1;
+		else
+			allow_run = 0;
+		Leds_toggleLed(LED3);
 	}
 
-	Leds_toggleLed(LED3);
-	}
 }
 
 void HAL_CAN_RxFifo1MsgPendingCallback(CAN_HandleTypeDef *hcan) {
 
-	HAL_CAN_GetRxMessage(&hcan1, CAN_RX_FIFO1, &CAN_RxHeader, CAN_RxMsg);
-	Leds_toggleLed(LED3);
+//	HAL_CAN_GetRxMessage(&hcan1, CAN_RX_FIFO1, &CAN_RxHeader, CAN_RxMsg);
+//	Leds_toggleLed(LED3);
+}
+
+void Can_sendMessage(uint8_t *msg, uint8_t ID) {
+	CAN_TxHeader.StdId = ID;
+	CAN_TxHeader.ExtId = 0;
+	CAN_TxHeader.IDE = CAN_ID_STD;
+	CAN_TxHeader.RTR = CAN_RTR_DATA;
+	CAN_TxHeader.DLC = 8;
+	uint8_t dane[8];
+	for (uint8_t i = 0; i < 8; i++) {
+		dane[i] = msg[i];
+	}
+
+	HAL_CAN_AddTxMessage(&hcan1, &CAN_TxHeader, dane, &CAN_TxMailbox);
+	Leds_toggleLed(LED4);
 }
 
 void Can_testMessage(void) {
@@ -123,16 +168,13 @@ void Can_testMessage(void) {
 	Leds_toggleLed(LED4);
 }
 
-
 void CAN1_TX_IRQHandler(void) {
 	HAL_CAN_IRQHandler(&hcan1);
 }
 
-
 void CAN1_RX0_IRQHandler(void) {
 	HAL_CAN_IRQHandler(&hcan1);
 }
-
 
 void CAN1_RX1_IRQHandler(void) {
 	HAL_CAN_IRQHandler(&hcan1);
