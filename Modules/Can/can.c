@@ -94,16 +94,14 @@ void HAL_CAN_RxFifo0MsgPendingCallback(CAN_HandleTypeDef *hcan) {
 
 		PID_reference_Value_left = (int16_t) (((float) refValue)
 				* speed_multiplier.f); // * PID_max_Speed;
-		if ((PID_reference_Value_left < 10 && PID_reference_Value_left > -10)
-				|| allow_run == 0)
+		if (allow_run == 0)
 			PID_reference_Value_left = 0;
 
 		refValue = CAN_RxMsg[1];
 
 		PID_reference_Value_right = (int16_t) (((float) refValue)
 				* speed_multiplier.f); // * PID_max_Speed;
-		if ((PID_reference_Value_right < 10 && PID_reference_Value_right > -10)
-				|| allow_run == 0)
+		if ( allow_run == 0)
 			PID_reference_Value_right = 0;
 
 		if (side == LEFT_SIDE) {
