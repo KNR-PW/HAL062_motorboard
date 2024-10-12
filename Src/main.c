@@ -19,7 +19,7 @@
 
 /* Global variables ----------------------------------------------------------- */
 
-static int speed = 0;
+//static int speed = 0;
 extern struct singleMotorParam param[3];
 
 /* Functions declaration ------------------------------------------------------ */

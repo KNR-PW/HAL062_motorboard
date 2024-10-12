@@ -297,6 +297,51 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim){
 			updateSpeed(0);
 		}
 
+		union Speed filtered_speed;
+		filtered_speed.f = getFilteredSpeed(g_encoder1Tick);
+
+		uint8_t data[8];
+		data[0] = (filtered_speed.ui&0xFF000000)>>24;
+		data[1] = (filtered_speed.ui&0x00FF0000)>>16;
+		data[2] = (filtered_speed.ui&0x0000FF00)>>8;
+		data[3] = (filtered_speed.ui&0x000000FF);
+		for(uint8_t k = 4; k<8; k++)
+			data[k] = 0;
+		if(side == RIGHT_SIDE)
+			Can_sendMessage(data, 24);
+		else
+			Can_sendMessage(data, 27);
+
+
+
+		filtered_speed.f = getFilteredSpeed(g_encoder2Tick);
+
+
+		data[0] = (filtered_speed.ui&0xFF000000)>>24;
+		data[1] = (filtered_speed.ui&0x00FF0000)>>16;
+		data[2] = (filtered_speed.ui&0x0000FF00)>>8;
+		data[3] = (filtered_speed.ui&0x000000FF);
+		for(uint8_t k = 4; k<8; k++)
+			data[k] = 0;
+		if(side == RIGHT_SIDE)
+			Can_sendMessage(data, 25);
+		else
+			Can_sendMessage(data, 28);
+
+
+		filtered_speed.f = getFilteredSpeed(g_encoder3Tick);
+
+
+		data[0] = (filtered_speed.ui&0xFF000000)>>24;
+		data[1] = (filtered_speed.ui&0x00FF0000)>>16;
+		data[2] = (filtered_speed.ui&0x0000FF00)>>8;
+		data[3] = (filtered_speed.ui&0x000000FF);
+		for(uint8_t k = 4; k<8; k++)
+			data[k] = 0;
+		if(side == RIGHT_SIDE)
+			Can_sendMessage(data, 26);
+		else
+			Can_sendMessage(data, 29);
 
 	}
 }

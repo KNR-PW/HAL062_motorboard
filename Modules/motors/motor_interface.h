@@ -12,6 +12,17 @@
 #include <stdbool.h>
 #include <stdint.h>
 
+struct Map {
+	int key;
+	void *ptr;
+};
+
+union Speed {
+	float f;
+	uint32_t ui;
+};
+
+
 // @brief LEDs ID structure
 // names corresponds to following designations of rover's wheels:
 // LF - left front

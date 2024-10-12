@@ -32,6 +32,6 @@ float lowPassFilter(float curr_in, float *prev_out);
 // @param encoder_ticks raw encoder tick data
 // @param prev_out pointer to output of filter from previous step
 // @returns output in current step
-float getFilteredSpeed(int32_t encoder_ticks, float *prev_out);
+float getFilteredSpeed(int32_t encoder_ticks);
 
 #endif /* MODULES_MOTORS_MOTOR_CONTROLLER_H */

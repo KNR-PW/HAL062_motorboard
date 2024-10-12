@@ -86,7 +86,7 @@ float lowPassFilter(float curr_in, float *prev_out) {
 	}
 }
 
-float getFilteredSpeed(int32_t encoder_ticks, float *prev_out) {
+float getFilteredSpeed(int32_t encoder_ticks){
 	static float raw_speed;
 	if (encoder_ticks != 0) {
 		if (encoder_ticks > ENC_MAX_PULSE_VALUE / 2.0)

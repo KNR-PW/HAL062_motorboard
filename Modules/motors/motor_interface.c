@@ -13,15 +13,6 @@
 #include "Can/can.h"
 
 // @brief structre Map allows to map sequence numbers in loops to pointers of specific variables
-struct Map {
-	int key;
-	void *ptr;
-};
-
-union Speed {
-	float f;
-	uint32_t ui;
-};
 
 
 
@@ -66,24 +57,11 @@ bool setOneSideSpeeds(struct singleMotorParam *params, int array_length) {
 	int i = 0;
 	for (i = 0; i < array_length; i += 1) {
 		union Speed filtered_speed;
-		filtered_speed.f = getFilteredSpeed(*(int32_t*) encoders_map[i].ptr,
-				speed_map[i].ptr);
+		filtered_speed.f = getFilteredSpeed(*(int32_t*) encoders_map[i].ptr);
 		*(float*) PID_map[i].ptr = PIDSpeedController(params[i].speed,
 				filtered_speed.f, *(float*) PID_map[i].ptr, i);
 
 //		uint32_t filtered_speed_coded = filtered_speed;
-		uint8_t data[8];
-		data[0] = (filtered_speed.ui&0xFF000000)>>24;
-		data[1] = (filtered_speed.ui&0x00FF0000)>>16;
-		data[2] = (filtered_speed.ui&0x0000FF00)>>8;
-		data[3] = (filtered_speed.ui&0x000000FF);
-		for(uint8_t k = 4; k<8; k++)
-			data[k] = 0;
-		if(side == RIGHT_SIDE)
-		Can_sendMessage(data, 23+i);
-		else
-		Can_sendMessage(data, 26+i);
-
 
 	}
 
