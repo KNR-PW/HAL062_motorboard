@@ -58,7 +58,7 @@ void CAN_Init(void) {
 	sFilterConfig.FilterMode = CAN_FILTERMODE_IDMASK;
 	sFilterConfig.FilterScale = CAN_FILTERSCALE_16BIT;
 	sFilterConfig.FilterIdHigh = (0x14 << 5);  // Pierwszy filtr na ID 0x14 (przesunięcie o 5 bitów)
-	sFilterConfig.FilterIdLow = (0x15 << 5);   // Drugi filtr na ID 0x15 (przesunięcie o 5 bitów)
+	sFilterConfig.FilterIdLow = (0x16 << 5);   // Drugi filtr na ID 0x15 (przesunięcie o 5 bitów)
 	sFilterConfig.FilterMaskIdHigh = (0xFE << 5); // Maska dla obu filtrów (ignoruje ostatni bit)
 	sFilterConfig.FilterMaskIdLow = (0xFE << 5);
 	sFilterConfig.FilterFIFOAssignment = CAN_RX_FIFO0;

@@ -41,7 +41,7 @@ float PIDOutMotor3 = 0;
 
 struct singleMotorParam param[3];
 enum motorSide side = LEFT_SIDE;
-//enum motorSide side = LEFT_SIDE;
+//enum motorSide side = RIGHT_SIDE;
 
 struct Map speed_map[3] = { { .key = 0, .ptr = &previousSpeedMotor1 }, { .key =
 		1, .ptr = &previousSpeedMotor2 }, { .key = 2, .ptr =
