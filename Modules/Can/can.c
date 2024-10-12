@@ -57,10 +57,10 @@ void CAN_Init(void) {
 	sFilterConfig.FilterBank = 0u;
 	sFilterConfig.FilterMode = CAN_FILTERMODE_IDMASK;
 	sFilterConfig.FilterScale = CAN_FILTERSCALE_16BIT;
-	sFilterConfig.FilterIdHigh = 0xFFFF;
-	sFilterConfig.FilterIdLow = 0x0000;
-	sFilterConfig.FilterMaskIdHigh = 0xFFFF;
-	sFilterConfig.FilterMaskIdLow = 0x0000;
+	sFilterConfig.FilterIdHigh = (0x14 << 5);  // Pierwszy filtr na ID 0x14 (przesunięcie o 5 bitów)
+	sFilterConfig.FilterIdLow = (0x15 << 5);   // Drugi filtr na ID 0x15 (przesunięcie o 5 bitów)
+	sFilterConfig.FilterMaskIdHigh = (0xFE << 5); // Maska dla obu filtrów (ignoruje ostatni bit)
+	sFilterConfig.FilterMaskIdLow = (0xFE << 5);
 	sFilterConfig.FilterFIFOAssignment = CAN_RX_FIFO0;
 	sFilterConfig.FilterActivation = ENABLE;
 	sFilterConfig.SlaveStartFilterBank = 0;
@@ -113,19 +113,20 @@ void HAL_CAN_RxFifo0MsgPendingCallback(CAN_HandleTypeDef *hcan) {
 
 			updateSpeed(PID_reference_Value_right);
 		}
-		Leds_toggleLed(LED3);
+		//Leds_toggleLed(LED3);
 	} else if (CAN_RxHeader.StdId == 21) {
 		speed_multiplier.ui = CAN_RxMsg[3] | (CAN_RxMsg[2] << 8)
 				| (CAN_RxMsg[1] << 16) | (CAN_RxMsg[0] << 24);
 
-		Leds_toggleLed(LED3);
+		//Leds_toggleLed(LED3);
 	} else if (CAN_RxHeader.StdId == 22) {
 		if (CAN_RxMsg[0] == 1 && CAN_RxMsg[1] == 1 && CAN_RxMsg[2] == 1)
 			allow_run = 1;
 		else
 			allow_run = 0;
-		Leds_toggleLed(LED3);
+		//Leds_toggleLed(LED3);
 	}
+	Leds_toggleLed(LED3);
 
 }
 
@@ -147,7 +148,7 @@ void Can_sendMessage(uint8_t *msg, uint8_t ID) {
 	}
 
 	HAL_CAN_AddTxMessage(&hcan1, &CAN_TxHeader, dane, &CAN_TxMailbox);
-	Leds_toggleLed(LED4);
+Leds_toggleLed(LED4);
 }
 
 void Can_testMessage(void) {
