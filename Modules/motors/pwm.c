@@ -77,9 +77,9 @@ HAL_StatusTypeDef PWM_Init() {
 	HAL_TIM_PWM_Start(&hPwm, TIM_CHANNEL_2);
 	HAL_TIM_PWM_Start(&hPwm, TIM_CHANNEL_3);
 
-	PWM_SetDutyCycle(TIM_CHANNEL_1, 750);
-	PWM_SetDutyCycle(TIM_CHANNEL_2, 750);
-	PWM_SetDutyCycle(TIM_CHANNEL_3, 750);
+	PWM_SetDutyCycle(TIM_CHANNEL_1, 7500);
+	PWM_SetDutyCycle(TIM_CHANNEL_2, 7500);
+	PWM_SetDutyCycle(TIM_CHANNEL_3, 7500);
 
 	return HAL_OK;
 }
@@ -91,10 +91,10 @@ HAL_StatusTypeDef PWM_SetDutyCycle(ChannelType channel, uint16_t duty) {
 }
 
 void motor_calibration(ChannelType channel) {
-	PWM_SetDutyCycle(channel, 1000);
+	PWM_SetDutyCycle(channel, 10000);
 	HAL_Delay(5000);
-	PWM_SetDutyCycle(channel, 500);
+	PWM_SetDutyCycle(channel, 5000);
 	HAL_Delay(5000);
-	PWM_SetDutyCycle(channel, 750);
+	PWM_SetDutyCycle(channel, 7500);
 	HAL_Delay(5000);
 }

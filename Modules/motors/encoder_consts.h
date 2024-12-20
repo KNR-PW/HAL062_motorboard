@@ -26,9 +26,9 @@
 #define ENC_MAX_PULSE_VALUE 20000
 
 /* contains information of numbers of pulse per whole rotation*/
-#define ENC_PULSE_PER_ROTATION 20
+#define ENC_PULSE_PER_ROTATION 1024
 
 
-#define VELOCITY_CLOCK_TIME 10 //in ms
+#define VELOCITY_CLOCK_TIME 100 //in ms
 
 #endif /* MODULES_MOTORS_ENCODER_CONSTS_H */

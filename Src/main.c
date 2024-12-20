@@ -1,84 +1,80 @@
 /**
  ******************************************************************************
  * @file           : main.c
- * @author         : TODO: Add credits
+ * @author         : K. Czechowicz, A. Rybojad, J. Prokopczuk, D. Mucha
  * @brief          : Main program body
  ******************************************************************************
  */
 
-#include <stm32f4xx_hal.h>
 
+/* Includes ------------------------------------------------------------------- */
+
+#include <stm32f4xx_hal.h>
 #include "Can/can.h"
 #include "leds/leds.h"
-
 #include "motors/timers.h"
 #include "motors/motor_interface.h"
 #include "motors/pwm.h"
 
-int d = 6000;
 
-static int speed = 6000;
+/* Global variables ----------------------------------------------------------- */
+
+//static int speed = 0;
 extern struct singleMotorParam param[3];
 
-//extern enum motorSide side = LEFT_SIDE;
+/* Functions declaration ------------------------------------------------------ */
 
 void SystemClock_Config(void);
 void Error_Handler(void);
 
+
+/* Functions ------------------------------------------------------------------ */
+
+
+/**
+ ******************************************************************************
+ * @brief          :	Main function initialize all required components
+ ******************************************************************************
+ */
 int main(void) {
-	SystemClock_Config();
 
-	HAL_Init();
-	SysTick_Config(80000);
+	SystemClock_Config(); 	//<Configuration of system clock
+	HAL_Init(); 			//< Initialization of HAL Library
+	SysTick_Config(80000); 	//<Setting SysTick Time
 
-	CAN_Init();
-	Leds_init();
-	Leds_welcomeFLash();
+	CAN_Init(); 			//< CAN initialization
 
-	PWM_Init();
-	updateSpeed(0);
-	InitTimers();
+	Leds_init(); 			//< LEDs Initialization
+	Leds_welcomeFLash(); 	//< Blinking all LED to inform of Program beginning
 
+	PWM_Init(); 			//< PWM initialization to steering motors
+	updateSpeed(0);			//< Setting Speed to 0, to be sure
 
-
-	/* Loop forever */
-	//find problem that motor speeds up imediatelly
-//	updateSpeed(0);
-//	param[0].speed = speed;
-//	param[0].id = LR;
-//	param[1].speed = speed;
-//	param[1].id = LM;
-//	param[2].speed = speed;
-//	param[2].id = LF;
+	InitTimers();			//< Initialization of timers of encoders
 
 
-	while (1) {
-
-//		updateSpeed(speed);
-
-//		setOneSideSpeeds(param, 3);
-		PWM_SetDutyCycle(CHANNEL2, d);
+	// Infinity loop
+	while (1){
 	}
 }
 
-TIM_HandleTypeDef htim4;
 
-void TIM4_IRQHandler(void) {
-	HAL_TIM_IRQHandler(&htim4);
-}
 
+/**
+ ******************************************************************************
+ * @brief          :	Function to configure system clock
+ ******************************************************************************
+ */
 void SystemClock_Config(void) {
 	  RCC_OscInitTypeDef RCC_OscInitStruct = {0};
 	  RCC_ClkInitTypeDef RCC_ClkInitStruct = {0};
 
-	  /** Configure the main internal regulator output voltage
-	  */
+	  // Configure the main internal regulator output voltage
 	  __HAL_RCC_PWR_CLK_ENABLE();
 	  __HAL_PWR_VOLTAGESCALING_CONFIG(PWR_REGULATOR_VOLTAGE_SCALE3);
 
-	  /** Initializes the RCC Oscillators according to the specified parameters
-	  * in the RCC_OscInitTypeDef structure.
-	  */
+	  //Initializes the RCC Oscillators according to the specified parameters
+	  //in the RCC_OscInitTypeDef structure.
 	  RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_HSE;
 	  RCC_OscInitStruct.HSEState = RCC_HSE_ON;
 	  RCC_OscInitStruct.PLL.PLLState = RCC_PLL_ON;
@@ -93,8 +89,7 @@ void SystemClock_Config(void) {
 	    Error_Handler();
 	  }
 
-	  /** Initializes the CPU, AHB and APB buses clocks
-	  */
+	  // Initializes the CPU, AHB and APB buses clocks
 	  RCC_ClkInitStruct.ClockType = RCC_CLOCKTYPE_HCLK|RCC_CLOCKTYPE_SYSCLK
 	                              |RCC_CLOCKTYPE_PCLK1|RCC_CLOCKTYPE_PCLK2;
 	  RCC_ClkInitStruct.SYSCLKSource = RCC_SYSCLKSOURCE_PLLCLK;
@@ -108,12 +103,13 @@ void SystemClock_Config(void) {
 	  }
 	}
 
-
+/**
+ ******************************************************************************
+ * @brief          :	Function to handle all detected errors.
+ * 						TODO separate files.
+ ******************************************************************************
+ */
 void Error_Handler(void) {
 	while (1) {
 	};
-}
-
-void WWDG_IRQHandler(){
-
 }
