@@ -57,10 +57,10 @@ void CAN_Init(void) {
 	sFilterConfig.FilterBank = 0u;
 	sFilterConfig.FilterMode = CAN_FILTERMODE_IDMASK;
 	sFilterConfig.FilterScale = CAN_FILTERSCALE_16BIT;
-	sFilterConfig.FilterIdHigh = 0xFFFF;
-	sFilterConfig.FilterIdLow = 0x0000;
-	sFilterConfig.FilterMaskIdHigh = 0xFFFF;
-	sFilterConfig.FilterMaskIdLow = 0x0000;
+	sFilterConfig.FilterIdHigh = (0x14<<5);
+	sFilterConfig.FilterIdLow = (0x15<<5);
+	sFilterConfig.FilterMaskIdHigh = 0xFE<<5;
+	sFilterConfig.FilterMaskIdLow = 0xFE<<5;
 	sFilterConfig.FilterFIFOAssignment = CAN_RX_FIFO0;
 	sFilterConfig.FilterActivation = ENABLE;
 	sFilterConfig.SlaveStartFilterBank = 0;
@@ -78,6 +78,10 @@ void CAN_Init(void) {
 			!= HAL_OK) {
 		volatile uint32_t b = 0;
 		b++;
+	}
+	if (HAL_CAN_ActivateNotification(&hcan1, CAN_IT_TX_MAILBOX_EMPTY) != HAL_OK)
+	{
+
 	}
 }
 
@@ -177,3 +181,7 @@ void CAN1_RX0_IRQHandler(void) {
 void CAN1_RX1_IRQHandler(void) {
 	HAL_CAN_IRQHandler(&hcan1);
 }
+//void HAL_CAN_TxMailbox0CompleteCallback(CAN_HandleTypeDef *hcan) {
+   // is_CAN_busy = false;
+   // process_CAN_transmission(); // Wysyłanie następnej wiadomości, jeśli istnieje
+//}

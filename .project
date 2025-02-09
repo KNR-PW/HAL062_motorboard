@@ -3,6 +3,7 @@
 	<name>motorboard</name>
 	<comment></comment>
 	<projects>
+		<project>rover_driver_f446</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>

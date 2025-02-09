@@ -14,6 +14,6 @@ void CAN_Init(void);
 void Can_testMessage(void);
 
 void Can_sendMessage(uint8_t* msg, uint8_t ID);
-
-
+//void HAL_CAN_TxMailbox0CompleteCallback(CAN_HandleTypeDef *hcan);
+void process_CAN_transmission();
 #endif // MODULES_CAN_CAN_H

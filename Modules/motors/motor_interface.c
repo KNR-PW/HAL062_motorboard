@@ -1,3 +1,5 @@
+
+
 /*
  ******************************************************************************
  * @file           : motor_interface.c
@@ -11,7 +13,7 @@
 #include "timers.h"
 #include "pwm.h"
 #include "Can/can.h"
-
+#include "Leds/leds.h"
 // @brief structre Map allows to map sequence numbers in loops to pointers of specific variables
 struct Map {
 	int key;
@@ -22,9 +24,12 @@ union Speed {
 	float f;
 	uint32_t ui;
 };
-
-
-
+volatile uint8_t speeddata[3][8];
+int current_message_id = 0;
+uint8_t data[8];
+volatile bool is_CAN_busy = false;
+volatile bool txcomplete= true;
+volatile bool messagesending=false;
 // variable stores speed of motor1 form previous step
 float previousSpeedMotor1 = 0;
 // variable stores speed of motor2 form previous step
@@ -50,6 +55,32 @@ struct Map speed_map[3] = { { .key = 0, .ptr = &previousSpeedMotor1 }, { .key =
 struct Map PID_map[3] = { { .key = 0, .ptr = &PIDOutMotor1 }, { .key = 1, .ptr =
 		&PIDOutMotor2 }, { .key = 2, .ptr = &PIDOutMotor3 } };
 
+
+void HAL_CAN_TxMailbox0CompleteCallback(CAN_HandleTypeDef *hcan) {
+    is_CAN_busy = false;
+    txcomplete = true;
+    process_CAN_transmission(); // Wysyłanie następnej wiadomości, jeśli istnieje
+}
+void process_CAN_transmission() {
+	if(txcomplete == true)
+	{
+    if (!is_CAN_busy && current_message_id < 3) {
+        is_CAN_busy = true;
+        int message_id = (side == RIGHT_SIDE) ? 23 + current_message_id : 26 + current_message_id;
+        Can_sendMessage(speeddata[current_message_id], message_id);
+        current_message_id++;
+        txcomplete = false;
+
+
+    }
+    else {
+                // Obsłuż błąd, jeśli wiadomość nie została wysłana
+              is_CAN_busy = false;
+              current_message_id=0;
+              messagesending = false;
+         }
+	}
+}
 bool setOneSideSpeeds(struct singleMotorParam *params, int array_length) {
 
 	// taking encoders measurements
@@ -64,6 +95,8 @@ bool setOneSideSpeeds(struct singleMotorParam *params, int array_length) {
 
 	// calculating speed and current control signal value from PID
 	int i = 0;
+	if (messagesending == false)
+	{
 	for (i = 0; i < array_length; i += 1) {
 		union Speed filtered_speed;
 		filtered_speed.f = getFilteredSpeed(*(int32_t*) encoders_map[i].ptr,
@@ -72,21 +105,24 @@ bool setOneSideSpeeds(struct singleMotorParam *params, int array_length) {
 				filtered_speed.f, *(float*) PID_map[i].ptr, i);
 
 //		uint32_t filtered_speed_coded = filtered_speed;
-		uint8_t data[8];
-		data[0] = (filtered_speed.ui&0xFF000000)>>24;
-		data[1] = (filtered_speed.ui&0x00FF0000)>>16;
-		data[2] = (filtered_speed.ui&0x0000FF00)>>8;
-		data[3] = (filtered_speed.ui&0x000000FF);
+
+		speeddata[i][0] = (filtered_speed.ui&0xFF000000)>>24;
+		speeddata[i][1] = (filtered_speed.ui&0x00FF0000)>>16;
+		speeddata[i][2] = (filtered_speed.ui&0x0000FF00)>>8;
+		speeddata[i][3] = (filtered_speed.ui&0x000000FF);
 		for(uint8_t k = 4; k<8; k++)
 			data[k] = 0;
-		if(side == RIGHT_SIDE)
-		Can_sendMessage(data, 23+i);
-		else
-		Can_sendMessage(data, 26+i);
-
+		//if(side == RIGHT_SIDE)
+				//Can_sendMessage(data, 23+i);
+				//else
+				//Can_sendMessage(data, 26+i);
+		 //current_message_id = i; // Ustawiamy ID wiadomości
+		  // Rozpoczęcie transmisji
 
 	}
-
+	messagesending=true;
+	process_CAN_transmission( );
+	}
 //	 setting PWM duty to concrete channel;
 	for (uint8_t i = 0; i < 3; i++) {
 		if (params[i].id == LR || params[i].id == RR) {
