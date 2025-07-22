@@ -10,7 +10,7 @@
 #define MOTORS_TIMERS_H_
 
 #include <stm32f4xx_hal.h>
-#include "can/can.h"
+#include "Can/can.h"
 
 // [Timer - Encoder - Pin] mapping for our custom motor board
 // TIM1_CH1 - ENK1_A - PA8

@@ -13,14 +13,11 @@
 #include "Can/can.h"
 #include "leds/leds.h"
 #include "motors/timers.h"
-#include "motors/motor_interface.h"
 #include "motors/pwm.h"
+#include "motors/motor.h"
 
 
 /* Global variables ----------------------------------------------------------- */
-
-//static int speed = 0;
-extern struct singleMotorParam param[3];
 
 /* Functions declaration ------------------------------------------------------ */
 
@@ -48,7 +45,7 @@ int main(void) {
 	Leds_welcomeFLash(); 	//< Blinking all LED to inform of Program beginning
 
 	PWM_Init(); 			//< PWM initialization to steering motors
-	updateSpeed(0);			//< Setting Speed to 0, to be sure
+	target_speed = 0;		//< Setting Speed to 0, to be sure
 
 	InitTimers();			//< Initialization of timers of encoders
 

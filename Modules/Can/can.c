@@ -8,9 +8,7 @@
 
 #include "Can/can.h"
 #include "leds/leds.h"
-#include "motors/motor_controller.h"
-#include "motors/motor_interface.h"
-#include "motors/pwm.h"
+#include "motors/motor.h"
 
 static uint32_t CAN_TxMailbox;
 static uint8_t CAN_RxMsg[8];
@@ -106,12 +104,12 @@ void HAL_CAN_RxFifo0MsgPendingCallback(CAN_HandleTypeDef *hcan) {
 
 		if (side == LEFT_SIDE) {
 
-			updateSpeed(-PID_reference_Value_left); //<left side has to be in other direction
+			target_speed = -PID_reference_Value_left; //<left side has to be in other direction
 
 		}
 		if (side == RIGHT_SIDE) {
 
-			updateSpeed(PID_reference_Value_right);
+			target_speed = PID_reference_Value_right;
 		}
 		//Leds_toggleLed(LED3);
 	} else if (CAN_RxHeader.StdId == 21) {

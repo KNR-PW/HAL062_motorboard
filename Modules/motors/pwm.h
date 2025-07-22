@@ -18,15 +18,6 @@ typedef enum {
 } ChannelType;
 
 HAL_StatusTypeDef PWM_Init();
-
-// @brief required motor calibration before first usage
-// @param channel enum type number of channel to precise motor
-void motor_calibration(ChannelType channel);
-
-// @brief Setting duty of motors PWM
-// @param channel enum type number of channel to precise motor
-// @param duty duty chosen from 500 to 1000
-// @returns predefined enum status type from HAL library
-HAL_StatusTypeDef PWM_SetDutyCycle(ChannelType channel, uint16_t duty);
+void PWM_SetDutyCycle(uint16_t duty);
 
 #endif //MOTORS_PWM_H_
