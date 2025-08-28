@@ -23,7 +23,8 @@ union Speed {
 	uint32_t ui;
 };
 
-
+union Speed measured_speed[3] = {0};
+uint8_t data_to_send[3][8];
 
 // variable stores speed of motor1 form previous step
 float previousSpeedMotor1 = 0;
@@ -71,18 +72,19 @@ bool setOneSideSpeeds(struct singleMotorParam *params, int array_length) {
 		*(float*) PID_map[i].ptr = PIDSpeedController(params[i].speed,
 				filtered_speed.f, *(float*) PID_map[i].ptr, i);
 
+		measured_speed[i].f = filtered_speed.f;
 //		uint32_t filtered_speed_coded = filtered_speed;
-		uint8_t data[8];
-		data[0] = (filtered_speed.ui&0xFF000000)>>24;
-		data[1] = (filtered_speed.ui&0x00FF0000)>>16;
-		data[2] = (filtered_speed.ui&0x0000FF00)>>8;
-		data[3] = (filtered_speed.ui&0x000000FF);
-		for(uint8_t k = 4; k<8; k++)
-			data[k] = 0;
-		if(side == RIGHT_SIDE)
-		Can_sendMessage(data, 23+i);
-		else
-		Can_sendMessage(data, 26+i);
+//		uint8_t data[8];
+//		data_to_send[i][0] = (filtered_speed.ui&0xFF000000)>>24;
+//		data_to_send[i][1] = (filtered_speed.ui&0x00FF0000)>>16;
+//		data_to_send[i][2] = (filtered_speed.ui&0x0000FF00)>>8;
+//		data_to_send[i][3] = (filtered_speed.ui&0x000000FF);
+////		for(uint8_t k = 4; k<8; k++)
+////			data[k] = 0;
+//		if(side == RIGHT_SIDE)
+//		Can_sendMessage(data_to_send[i], 23+i);
+//		else
+//		Can_sendMessage(data_to_send[i], 26+i);
 
 
 	}
@@ -90,12 +92,28 @@ bool setOneSideSpeeds(struct singleMotorParam *params, int array_length) {
 //	 setting PWM duty to concrete channel;
 	for (uint8_t i = 0; i < 3; i++) {
 		if (params[i].id == LR || params[i].id == RR) {
+			if(params[i].speed > 0)
+				PWM_SetDutyCycle(CHANNEL1, 7800 + *(float*) PID_map[i].ptr);
+			else if(params[i].speed < 0)
+				PWM_SetDutyCycle(CHANNEL1, 7200 + *(float*) PID_map[i].ptr);
+			else if(params[i].speed == 0)
 				PWM_SetDutyCycle(CHANNEL1, 7500 + *(float*) PID_map[i].ptr);
+
 		}
 		if (params[i].id == LM || params[i].id == RM) {
-				PWM_SetDutyCycle(CHANNEL2, 7500 + *(float*) PID_map[i].ptr);
+//			if(params[i].speed > 0)
+//				PWM_SetDutyCycle(CHANNEL2, 7800 + *(float*) PID_map[i].ptr);
+//			else if(params[i].speed < 0)
+//				PWM_SetDutyCycle(CHANNEL2, 7200 + *(float*) PID_map[i].ptr);
+//			else if(params[i].speed == 0)
+//				PWM_SetDutyCycle(CHANNEL2, 7500 + *(float*) PID_map[i].ptr);
 		}
 		if (params[i].id == LF || params[i].id == RF) {
+			if(params[i].speed > 0)
+				PWM_SetDutyCycle(CHANNEL3, 7800 + *(float*) PID_map[i].ptr);
+			else if(params[i].speed < 0)
+				PWM_SetDutyCycle(CHANNEL3, 7200 + *(float*) PID_map[i].ptr);
+			else if(params[i].speed == 0)
 				PWM_SetDutyCycle(CHANNEL3, 7500 + *(float*) PID_map[i].ptr);
 		}
 	}
@@ -125,6 +143,23 @@ bool updateSpeed(int speed) {
 
 	return 0;
 }
+
+bool updateSpeedCam(uint16_t  speed) {
+
+	static uint16_t angle = 0;
+	angle = (uint16_t)(speed*50 - 2500);
+	if (side == LEFT_SIDE) {
+
+		PWM_SetDutyCycle(CHANNEL2, 7500 + angle);
+	}
+	if (side == RIGHT_SIDE) {
+		PWM_SetDutyCycle(CHANNEL2, 7500 + angle);
+	}
+
+	return 0;
+}
+
+
 
 bool updatePID() {
 	setOneSideSpeeds(param, 3);

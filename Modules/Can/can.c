@@ -47,7 +47,7 @@ void CAN_Init(void) {
 	hcan1.Init.TimeTriggeredMode = DISABLE;
 	hcan1.Init.AutoBusOff = DISABLE;
 	hcan1.Init.AutoWakeUp = DISABLE;
-	hcan1.Init.AutoRetransmission = DISABLE;
+	hcan1.Init.AutoRetransmission = ENABLE;
 	hcan1.Init.ReceiveFifoLocked = DISABLE;
 	hcan1.Init.TransmitFifoPriority = DISABLE;
 	if (HAL_CAN_Init(&hcan1) != HAL_OK) {
@@ -127,6 +127,32 @@ void HAL_CAN_RxFifo0MsgPendingCallback(CAN_HandleTypeDef *hcan) {
 		Leds_toggleLed(LED3);
 	}
 
+	else if (CAN_RxHeader.StdId == 5) {
+
+		refValue = CAN_RxMsg[0];
+
+		PID_reference_Value_left = (int16_t) (((float) refValue)
+				* speed_multiplier.f); // * PID_max_Speed;
+		if (allow_run == 0)
+			PID_reference_Value_left = 0;
+
+		PID_reference_Value_right = (int16_t) (((float) refValue)
+				* speed_multiplier.f); // * PID_max_Speed;
+		if ( allow_run == 0)
+			PID_reference_Value_right = 0;
+
+		if (side == LEFT_SIDE) {
+
+			updateSpeedCam(-PID_reference_Value_left); //<left side has to be in other direction
+
+		}
+		if (side == RIGHT_SIDE) {
+
+			updateSpeedCam(PID_reference_Value_right);
+		}
+		Leds_toggleLed(LED3);
+	}
+
 }
 
 void HAL_CAN_RxFifo1MsgPendingCallback(CAN_HandleTypeDef *hcan) {
@@ -177,3 +203,4 @@ void CAN1_RX0_IRQHandler(void) {
 void CAN1_RX1_IRQHandler(void) {
 	HAL_CAN_IRQHandler(&hcan1);
 }
+

@@ -46,5 +46,6 @@ bool setOneSideSpeeds(struct singleMotorParam *params, int array_length);
 
 bool updateSpeed(int speed);
 bool updatePID();
+bool updateSpeedCam(uint16_t  speed);
 
 #endif /* MODULES_MOTORS_MOTOR_INTERFACE_H */
