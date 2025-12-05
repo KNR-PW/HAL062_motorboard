@@ -78,6 +78,8 @@ void CAN_init(void) {
 
 	HAL_CAN_ActivateNotification(can_handle, CAN_IT_RX_FIFO0_MSG_PENDING | CAN_IT_ERROR);
 
+	HAL_CAN_Start(can_handle);
+
 	if ((can_handle->State != HAL_CAN_STATE_READY) && 
 		(can_handle->State != HAL_CAN_STATE_LISTENING)) {
 		// TODO errorHandler();	
