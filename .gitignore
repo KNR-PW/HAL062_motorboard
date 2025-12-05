@@ -1,0 +1,25 @@
+*.log
+*.bak
+
+Debug/
+Release/
+compile_commands/
+
+.settings/
+*.launch
+.vscode/
+
+# Ignore common binary and object files generated during compilation.
+# They should not be included in the repository as they are build artifacts.
+*.elf
+*.map
+*.bin
+*.hex
+*.srec
+*.lst
+*.o
+*.d
+*.a
+*.su
+*.crl
+
