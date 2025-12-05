@@ -34,13 +34,11 @@ static void CAN_recivedCallback(CAN_HandleTypeDef *hcan) {
 
 	switch (can_rxHeader.StdId) {
 	case 20:
-		if (BOARD_SIDE == LEFT_SIDE) break;
-		target_speed = -RX_payload.u8[0];
-		break;
-
-	case 21:
-		if (BOARD_SIDE == RIGHT_SIDE) break;
-		target_speed = RX_payload.u8[0];
+		if (BOARD_SIDE == LEFT_SIDE) {
+			target_speed = -RX_payload.u8[0];
+			break;
+		}
+		target_speed = RX_payload.u8[1];
 		break;
 
 	default:

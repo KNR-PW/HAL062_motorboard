@@ -4,6 +4,16 @@
 
 extern TIM_HandleTypeDef *tim_pwm;
 
+
+float TP = 0.1; // 100 ms = 8 Mhz clock / (80 kHz tim7 prescaler * 10 tim7 period) -> encoders measure
+
+float PID_K = 3.5;
+float PID_TD = 0.0;
+float PID_TI = 1.0;
+float R0;
+float R1;
+float R2;
+
 static float PIDOut = 0.0f;
 static float error[3] = {0.0f};
 static int16_t speed_modifier = 10; // 10 seems to give best results, TODO find out why and document
@@ -28,6 +38,11 @@ void updatePID(int32_t encoder_ticks) {
 	error[0] = (float) target_speed - current_speed;
 	error[2] = error[1];
 	error[1] = error[0];
+
+	// TODO find the formula for this and paste it in without all this macro math
+	R0 = (PID_K * (1 + TP / (2 * PID_TI) + PID_TD / TP));
+	R1 = (PID_K * (TP / (2 * PID_TI) - 2 * PID_TD / TP - 1));
+	R2 = (PID_K * PID_TD / TP);
 
 	PIDOut = R2*error[2] + R1*error[1] + R0*error[0] + PIDOut;
 
