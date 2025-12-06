@@ -11,7 +11,7 @@ TIM_HandleTypeDef *tim_encoder = &htim3; //encoder - TIM3
 TIM_HandleTypeDef *tim_pwm = &htim2; // PWM - TIM2
 TIM_HandleTypeDef *tim_speed = &htim4; // measuring speed - TIM4
 
-static int32_t g_encoderTick = 0;
+static int16_t g_encoderTick = 0;
 
 static void TIM_speedPeriodElapsedCallback(TIM_HandleTypeDef *htim);
 
@@ -25,7 +25,7 @@ void TIM_init(void) {
 void TIM_speedPeriodElapsedCallback(TIM_HandleTypeDef* htim) {
 	(void) htim;
 
-	g_encoderTick = (int32_t) tim_encoder->Instance->CNT;
+	g_encoderTick = (int16_t) tim_encoder->Instance->CNT;
 	__HAL_TIM_SET_COUNTER(tim_encoder, 0);
 
 	updatePID(g_encoderTick);

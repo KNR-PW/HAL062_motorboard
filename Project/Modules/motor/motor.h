@@ -4,9 +4,6 @@
 #include <stm32f1xx_hal.h>
 
 #define PWM_CHANNEL TIM_CHANNEL_4
-#define ENC_MAX_PULSE_VALUE 65535
-#define ENC_PULSE_PER_ROTATION 1024
-#define VELOCITY_CLOCK_TIME 20 //in ms
 
 extern int32_t target_speed; 
 extern float current_speed;
@@ -17,7 +14,7 @@ extern float current_speed;
 // @returns true if iteration succeeded, false otherwise
 //
 // TODO update desctiption
-void updatePID(int32_t encoder_ticks);
+void updatePID(int16_t encoder_ticks);
 
 // @brief required motor calibration before first usage
 void motor_calibration(void);
