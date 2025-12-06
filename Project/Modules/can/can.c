@@ -45,6 +45,7 @@ static void CAN_recivedCallback(CAN_HandleTypeDef *hcan) {
 		break;
 	}
 	LED_TOGGLE(LED_STATUS);
+	__HAL_TIM_SET_COUNTER(tim_comwdg, 0);
 }
 
 static void CAN_errorCallback(CAN_HandleTypeDef *hcan) {(void) hcan;}

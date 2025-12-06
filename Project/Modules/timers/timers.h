@@ -14,6 +14,7 @@
 extern TIM_HandleTypeDef *tim_encoder; //encoder - TIM3
 extern TIM_HandleTypeDef *tim_pwm; // PWM - TIM2
 extern TIM_HandleTypeDef *tim_speed; // measuring speed - TIM4
+extern TIM_HandleTypeDef *tim_comwdg;
 
 void TIM_init(void);
 

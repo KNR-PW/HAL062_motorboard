@@ -23,3 +23,7 @@ compile_commands/
 *.su
 *.crl
 
+/CMakeLists.txt
+/CMakeLists_template.txt
+/cmake-build-debug/
+/.idea/
