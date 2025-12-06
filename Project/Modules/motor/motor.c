@@ -24,10 +24,6 @@ void updatePID(int16_t encoder_ticks) {
 	error[1] = error[0];
 	error[0] = (float) target_speed - current_speed;
 
-	R0 = (PID_K * (1 + TP / (2 * PID_TI) + PID_TD / TP));
-	R1 = (PID_K * (TP / (2 * PID_TI) - 2 * PID_TD / TP - 1));
-	R2 = (PID_K * PID_TD / TP);
-
 	PIDOut = R2*error[2] + R1*error[1] + R0*error[0] + PIDOut;
 
 	if (target_speed == 0) {PIDOut = 0;}

@@ -12,6 +12,7 @@ TIM_HandleTypeDef *tim_pwm = &htim2; // PWM - TIM2
 TIM_HandleTypeDef *tim_speed = &htim4; // measuring speed - TIM4
 
 static int16_t g_encoderTick = 0;
+static uint8_t counter = 0;
 
 static void TIM_speedPeriodElapsedCallback(TIM_HandleTypeDef *htim);
 
@@ -24,11 +25,21 @@ void TIM_init(void) {
 
 void TIM_speedPeriodElapsedCallback(TIM_HandleTypeDef* htim) {
 	(void) htim;
+	counter++;
 
 	g_encoderTick = (int16_t) tim_encoder->Instance->CNT;
 	__HAL_TIM_SET_COUNTER(tim_encoder, 0);
 
 	updatePID(g_encoderTick);
+
+	if (counter > 5) {
+		counter = 0;
+		// testing ids: 50, 51, 52, 53
+		union Message data = { .u8={0} };
+		data.f32[0] = current_speed;
+		data.u32[1] = target_speed;
+		CAN_transmit(50, data.u8, 8);
+	}
 }
 
 // TODO add error callback registration 

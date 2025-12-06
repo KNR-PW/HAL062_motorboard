@@ -6,6 +6,7 @@
 union Message {
 	uint8_t u8[8];
 	uint32_t u32[2];
+	float f32[2];
 };
 
 void CAN_init(void);

@@ -16,13 +16,13 @@
 // 2*pi*r / TICKS_PER_ROTATION / time
 const float TICKS_TO_CM_PER_S = (2 * 3.14159 * WHEEL_RADIUS) / (VELOCITY_CLOCK_TIME * TICKS_PER_ROTATION);
 
-float TP = 0.1;
+#define TP 0.1
+#define PID_K 3.5
+#define PID_TD 0
+#define PID_TI 1.0
 
-float PID_K = 3.5;
-float PID_TD = 0.0;
-float PID_TI = 1.0;
-float R0;
-float R1;
-float R2;
+const float R0 = (PID_K * (1 + TP / (2 * PID_TI) + PID_TD / TP));
+const float R1 = (PID_K * (TP / (2 * PID_TI) - 2 * PID_TD / TP - 1));
+const float R2 = (PID_K * PID_TD / TP);
 
 #endif /* MODULES_MOTORS_PID_CONSTS_H */
