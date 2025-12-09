@@ -7,6 +7,17 @@ extern TIM_HandleTypeDef *tim_pwm;
 static float PIDOut = 0.0f;
 static float error[3] = {0.0f};
 
+float TP = 0.1;
+float PID_K = 3.5;
+float PID_TD = 0;
+float PID_TI = 1.0;
+
+float R0;
+float R1;
+float R2;
+const float TICKS_TO_CM_PER_S = (2 * 3.14159 * WHEEL_RADIUS) / (VELOCITY_CLOCK_TIME * TICKS_PER_ROTATION);
+
+
 float current_speed = 0.0f;
 int32_t target_speed = 0;
 
@@ -18,6 +29,11 @@ static void PWM_SetDutyCycle(uint16_t duty) {
 }
 
 void updatePID(int16_t encoder_ticks) {
+	// for live PID parameter setting
+	R0 = (PID_K * (1 + TP / (2 * PID_TI) + PID_TD / TP));
+	R1 = (PID_K * (TP / (2 * PID_TI) - 2 * PID_TD / TP - 1));
+	R2 = (PID_K * PID_TD / TP);
+
 	current_speed = encoder_ticks*TICKS_TO_CM_PER_S;
 
 	error[2] = error[1];

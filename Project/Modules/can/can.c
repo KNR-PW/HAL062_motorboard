@@ -2,10 +2,11 @@
 #include "leds/leds.h"
 #include "timers/timers.h"
 #include "motor/motor.h"
+#include "motor/pid_consts.h"
 
 #define LEFT_SIDE 0
 #define RIGHT_SIDE 1
-#define BOARD_SIDE LEFT_SIDE
+#define BOARD_SIDE RIGHT_SIDE
 
 extern CAN_HandleTypeDef hcan;
 static CAN_HandleTypeDef *can_handle = &hcan;
@@ -38,7 +39,19 @@ static void CAN_recivedCallback(CAN_HandleTypeDef *hcan) {
 			target_speed = -((int8_t) RX_payload.u8[0]);
 		else
 			target_speed = ((int8_t) RX_payload.u8[1]);
+		break;
 
+	case 51:
+		TP = RX_payload.f32[0];
+		break;
+	case 52:
+		PID_K = RX_payload.f32[0];
+		break;
+	case 53:
+		PID_TD = RX_payload.f32[0];
+		break;
+	case 54:
+		PID_TI = RX_payload.f32[0];
 		break;
 
 	default:

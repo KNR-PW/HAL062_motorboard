@@ -3,11 +3,12 @@
 #include "can/can.h"
 #include "leds/leds.h"
 
+#define PID_DEBUG 0
+
 extern TIM_HandleTypeDef htim2;
 extern TIM_HandleTypeDef htim3;
 extern TIM_HandleTypeDef htim4;
 extern TIM_HandleTypeDef htim1;
-
 
 TIM_HandleTypeDef *tim_encoder = &htim3; //encoder - TIM3
 TIM_HandleTypeDef *tim_pwm = &htim2; // PWM - TIM2
@@ -37,9 +38,11 @@ void TIM_speedPeriodElapsedCallback(TIM_HandleTypeDef* htim) {
 
 	updatePID(g_encoderTick);
 
+	if (!PID_DEBUG) {return;}
+
+	// for PID debug
 	if (counter > 5) {
 		counter = 0;
-		// testing ids: 50, 51, 52, 53
 		union Message data = { .u8={0} };
 		data.f32[0] = current_speed;
 		data.u32[1] = target_speed;
@@ -48,7 +51,7 @@ void TIM_speedPeriodElapsedCallback(TIM_HandleTypeDef* htim) {
 }
 void TIM_comwdgCallback(TIM_HandleTypeDef* htim)
 {
-	target_speed = 0;
+//	target_speed = 0;
 }
 
 // TODO add error callback registration 
