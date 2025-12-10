@@ -51,7 +51,7 @@ void TIM_speedPeriodElapsedCallback(TIM_HandleTypeDef* htim) {
 }
 void TIM_comwdgCallback(TIM_HandleTypeDef* htim)
 {
-//	target_speed = 0;
+	target_speed = 0;
 }
 
 // TODO add error callback registration 
